@@ -39,7 +39,7 @@ export async function openMainMenu(player) {
 }
 
 // Spawn point: 0 0 0 until an admin uses /admin > Set Spawn Here.
-function goToSpawn(player) {
+export function goToSpawn(player) {
   const s = getSpawn();
   // +0.5 puts you in the middle of the block instead of on its corner
   player.teleport({ x: s.x + 0.5, y: s.y, z: s.z + 0.5 }, { dimension: world.getDimension(s.dim ?? "minecraft:overworld") });

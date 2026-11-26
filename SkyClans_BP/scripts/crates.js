@@ -1,6 +1,6 @@
 import { ItemStack, system } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
-import { NAV, SCREEN, show, success } from "./forms.js";
+import { NAV, SCREEN, show, success, tilePages } from "./forms.js";
 import { addMoney, fmt } from "./money.js";
 import { KITS, giveKit, kitIcon } from "./kits.js";
 import { giveSpawner, mobIcon, mobName } from "./spawners.js";
@@ -227,6 +227,18 @@ async function openCrate(player, crateId) {
     while (!given && player.isValid) await system.waitTicks(5); // pressed early: wait for the reel
     return crateMenu(player, crateId);
   }
+}
+
+// ---- /crates: every crate and your keys ---------------------------------------------
+export function cratesMenu(player) {
+  return tilePages(player, {
+    title: "CRATES",
+    body: "§7Tap a crate to see its prizes",
+    tiles: Object.entries(CRATES).map(([id, c]) => {
+      const n = countKeys(player, id);
+      return { text: `${c.colour}${c.name}\n§7${n} key${n === 1 ? "" : "s"}`, icon: KEY_ICON(id), onClick: () => crateMenu(player, id) };
+    }),
+  });
 }
 
 // ---- admin: give keys -----------------------------------------------------------------

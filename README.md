@@ -5,7 +5,7 @@ Clans add-on for Minecraft Bedrock skyblock. Built one menu at a time: each menu
 ## Install
 Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on both packs (behaviour + resources) in the world. Beta APIs are **not** needed.
 
-## What works so far (v0.11.0)
+## What works so far (v0.12.0)
 - **SkyClans Menu** item, given once to each new player (with the starting money), or `/give @s skyclans:menu`.
 - **Main menu:** real wallet in the stat chip; Spawn button teleports to the spawn point (0 0 0 until set in /admin). Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home says "coming soon".
 - **Money:** every player has a wallet. Money shows short everywhere ($5K, $100K, $1.5M). `/bal` shows it (short and exact), `/pay <player> <amount>` sends money.
@@ -15,7 +15,9 @@ Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on 
 - **Crates:** Common, Rare and Legendary keys. Use a key -> crate menu (prizes and chances) -> Open key -> a reel spins and stops on the prize (money, items, keys, spawners or kits). Prizes are in `SkyClans_BP/scripts/crates.js`.
 - **Settings (per player):** Chunk Borders, Full Bright, Coordinates work; Raid Alert Sound is saved for when raids exist.
 - **Sidebar:** each player's own panel on the right: balance, spawners, heads, players online.
-- **`/admin`** (operators): Money (give / take / set), Give Spawner, Give Kit, Give Keys, Set Spawn Here, Starting Money, Sidebar on/off, Menu Item.
+- **Commands (everyone):** `/spawn` `/menu` `/shop` `/sell hand|all` `/bal` `/baltop` `/pay <player> <amount>` `/kits` `/crates` `/settings` `/coords`.
+- **Admins = players with the `admin` tag** (`/tag <name> add admin`). Admin commands: `/admin` `/eco give|take|set <player> <amount>` `/givekey <player> <common|rare|legendary> [amount]` `/setspawn` `/broadcast <message>`. All commands are in `SkyClans_BP/scripts/commands.js`.
+- **`/admin`** menu: Money (give / take / set), Give Spawner, Give Kit, Give Keys, Set Spawn Here, Starting Money, Sidebar on/off, Menu Item.
 - Members, Insurance and Raid Dispatch screens show placeholder data until clans exist.
 
 ## Layout

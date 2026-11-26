@@ -54,11 +54,10 @@ function parseKey(key) {
 const container = (p) => p.getComponent("minecraft:inventory")?.container;
 const isCreative = (p) => String(p.getGameMode()).toLowerCase() === "creative";
 
-/** Operators (or players tagged skyclans:admin) can manage anyone's spawner. */
+/** Admins (players with the "admin" tag: /tag <name> add admin) can manage anyone's spawner. */
 export function isAdmin(p) {
-  if (p.hasTag("skyclans:admin")) return true;
   try {
-    return Number(p.playerPermissionLevel) >= 2; // 2 = operator
+    return p.hasTag("admin");
   } catch {
     return false;
   }

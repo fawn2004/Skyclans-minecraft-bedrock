@@ -100,6 +100,13 @@ export function openShopMenu(player) {
   return openPage(player, [SHOP], 0);
 }
 
+/** /sell hand  or  /sell all */
+export function quickSell(player, mode) {
+  const prices = sellList();
+  if (mode === "all") sellAll(player, prices);
+  else sellHand(player, prices);
+}
+
 /**
  * Shows one page of a category.
  *   trail: the categories from the shop down to this one (used for Back)

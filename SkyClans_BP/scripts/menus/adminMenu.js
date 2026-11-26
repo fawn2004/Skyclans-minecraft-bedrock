@@ -12,13 +12,13 @@ import { clearSidebars } from "../sidebar.js";
 const ICON = "textures/ui/skyclans/";
 const toAdmin = (player) => () => openAdminMenu(player);
 
-// /admin (operators only).
+// /admin - players with the "admin" tag (/tag <name> add admin).
 export function openAdminMenu(player) {
   const sp = getSpawn();
   const sidebarOn = sidebarEnabled();
   return tilePages(player, {
     title: "ADMIN",
-    body: "§7Operators only",
+    body: "§7Admins only (admin tag)",
     tiles: [
       { text: "Money\n§7Give / take / set", icon: "textures/items/gold_ingot", onClick: () => moneyPlayers(player) },
       { text: "Give Spawner\n§7For testing", icon: "textures/blocks/mob_spawner", onClick: () => giveSpawnerMenu(player) },

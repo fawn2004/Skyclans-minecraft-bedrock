@@ -13,7 +13,42 @@ export function getBalance(player) {
 }
 
 export function setBalance(player, amount) {
-  player.setDynamicProperty(KEY, Math.max(0, Math.floor(amount)));
+  const bal = Math.max(0, Math.floor(amount));
+  player.setDynamicProperty(KEY, bal);
+  rememberBalance(player, bal);
+}
+
+// ---- balance top (/baltop) --------------------------------------------------------
+// The richest players are also kept in one world property, so /baltop can show
+// players who are offline. Only the top TOP_KEEP are stored.
+const TOP_KEY = "skyclans:baltop";
+const TOP_KEEP = 50;
+
+function readTop() {
+  try {
+    return JSON.parse(String(world.getDynamicProperty(TOP_KEY) ?? "{}"));
+  } catch {
+    return {};
+  }
+}
+
+function rememberBalance(player, bal) {
+  const top = readTop(); // id -> [name, balance]
+  top[player.id] = [player.name, bal];
+  const kept = Object.entries(top)
+    .sort((a, b) => b[1][1] - a[1][1])
+    .slice(0, TOP_KEEP);
+  world.setDynamicProperty(TOP_KEY, JSON.stringify(Object.fromEntries(kept)));
+}
+
+/** [{ name, balance }] richest first (online players use their live balance). */
+export function topBalances(count = 10) {
+  const top = readTop();
+  for (const p of world.getAllPlayers()) top[p.id] = [p.name, getBalance(p)];
+  return Object.values(top)
+    .map(([name, balance]) => ({ name, balance }))
+    .sort((a, b) => b.balance - a.balance)
+    .slice(0, count);
 }
 
 export function addMoney(player, amount) {
