@@ -1,6 +1,8 @@
 // Picks which layout an ActionForm uses, from the start of its title:
 //   "§s§c§1"  -> SkyClans main menu      (skyclans.main_screen)
 //   "§s§c§2"  -> SkyClans settings menu  (skyclans.settings_screen)
+//   "§s§c§3"  -> SkyClans members menu   (sc_members.screen)
+//   "§s§c§4"  -> SkyClans insurance menu (sc_insurance.screen)
 //   anything without "§s§c" -> the normal vanilla form, so other add-ons are unaffected
 {
   "namespace": "server_form",
@@ -55,6 +57,30 @@
             {
               "binding_type": "view",
               "source_property_name": "(not ((#title_text - '§s§c§2') = #title_text))",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      },
+      {
+        "skyclans_members@sc_members.screen": {
+          "bindings": [
+            { "binding_name": "#title_text" },
+            {
+              "binding_type": "view",
+              "source_property_name": "(not ((#title_text - '§s§c§3') = #title_text))",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      },
+      {
+        "skyclans_insurance@sc_insurance.screen": {
+          "bindings": [
+            { "binding_name": "#title_text" },
+            {
+              "binding_type": "view",
+              "source_property_name": "(not ((#title_text - '§s§c§4') = #title_text))",
               "target_property_name": "#visible"
             }
           ]

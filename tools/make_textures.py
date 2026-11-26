@@ -302,3 +302,130 @@ for name, col in (("back", (190, 196, 206)), ("back_hover", (255, 255, 255))):
     draw_sprite(img, ARROW, col, 2, 3, 1)
     img.save(UI / f"{name}.png")
 print("settings textures written")
+
+
+# ---------------------------------------------------------------- Members
+CYAN = (64, 196, 230)
+GOLD = (240, 186, 64)
+
+
+def card(w, h, border, fill=BG):
+    img = Image.new("RGBA", (w * S, h * S), fill)
+    ImageDraw.Draw(img).rectangle([0, 0, w * S - 1, h * S - 1], outline=border + (255,) if len(border) == 3 else border, width=S)
+    return img
+
+
+FACE = [  # simple 8x8 player face: h hair, s skin, e eye, w white, m mouth
+    "hhhhhhhh",
+    "hhhhhhhh",
+    "hssssssh",
+    "swessews",
+    "ssssssss",
+    "sssmmsss",
+    "ssmssmss",
+    "ssssssss",
+]
+FACE_COL = {"h": (92, 62, 34), "s": (226, 172, 130), "e": (70, 60, 140), "w": (240, 240, 240), "m": (150, 90, 70)}
+
+
+def face(img, x0, y0, scale):
+    d = ImageDraw.Draw(img)
+    for y, row in enumerate(FACE):
+        for x, ch in enumerate(row):
+            d.rectangle([x0 + x * scale, y0 + y * scale, x0 + (x + 1) * scale - 1, y0 + (y + 1) * scale - 1], fill=FACE_COL[ch] + (255,))
+
+
+f = Image.new("RGBA", (8 * 4, 8 * 4), (0, 0, 0, 0))
+face(f, 0, 0, 4)
+f.save(UI / "face.png")
+
+# Person card (84x30): cyan border, face on the left
+c = card(84, 30, CYAN)
+face(c, 5 * S, 5 * S, int(2.5 * S))
+c.save(UI / "member_owner.png")
+
+# Invite card: gold border, grey plus
+c = card(84, 30, GOLD)
+d = ImageDraw.Draw(c)
+d.rectangle([12 * S, 7 * S, 16 * S - 1, 23 * S - 1], fill=(110, 118, 132, 255))
+d.rectangle([6 * S, 13 * S, 22 * S - 1, 17 * S - 1], fill=(110, 118, 132, 255))
+c.save(UI / "member_invite.png")
+
+# Tree background (224x188) with the connecting lines
+LINE = (70, 80, 98, 255)
+t = card(224, 188, EDGE, (13, 17, 25, 255))
+d = ImageDraw.Draw(t)
+def hl(x1, x2, y): d.rectangle([x1 * S, y * S, x2 * S + S - 1, y * S + S - 1], fill=LINE)
+def vl(x, y1, y2): d.rectangle([x * S, y1 * S, x * S + S - 1, y2 * S + S - 1], fill=LINE)
+vl(112, 42, 66)
+vl(112, 94, 120)
+hl(40, 184, 106)
+vl(40, 106, 118)
+vl(184, 106, 118)
+t.save(UI / "members_tree.png")
+
+# Selected panel (106x72) and the permissions table (106x128)
+card(106, 72, CYAN, (13, 17, 25, 255)).save(UI / "panel_selected.png")
+tbl = card(106, 128, EDGE, (13, 17, 25, 255))
+d = ImageDraw.Draw(tbl)
+PERMS = [(1, 1, 0), (1, 1, 0), (1, 1, 0), (1, 1, 0), (1, 1, 0), (1, 0, 0), (1, 1, 1)]
+for r, row in enumerate(PERMS):
+    for col, on in enumerate(row):
+        x, y = (54 + col * 18) * S, (26 + r * 13 + 2) * S
+        d.rectangle([x, y, x + 4 * S - 1, y + 4 * S - 1], fill=(52, 206, 140, 255) if on else (44, 50, 62, 255))
+tbl.save(UI / "panel_perms.png")
+
+for name, col in (("btn_red", (86, 22, 24)), ("btn_red_hover", (120, 32, 34))):
+    b = card(60, 14, tuple(min(255, v + 30) for v in col), col + (255,))
+    b.save(UI / f"{name}.png")
+
+
+# ---------------------------------------------------------------- Insurance
+TIERS = {
+    "basic": (178, 170, 158),
+    "silver": (214, 222, 232),
+    "gold": (240, 186, 64),
+    "diamond": (64, 180, 170),
+}
+
+
+def vault(img, x0, y0, colour, scale):
+    """16x16 vault door: coloured frame, black ring, light keyhole."""
+    d = ImageDraw.Draw(img)
+    dark = tuple(int(v * 0.6) for v in colour)
+    for y in range(16):
+        for x in range(16):
+            dx, dy = x - 7.5, y - 7.5
+            dist = (dx * dx + dy * dy) ** 0.5
+            if x in (0, 15) or y in (0, 15) or y >= 14:
+                c = dark
+            elif dist < 1.6 and abs(dx) < 1:
+                c = (236, 230, 214)
+            elif dist < 5.6:
+                c = (20, 20, 24) if dist > 1.6 else (60, 60, 66)
+            elif dist < 6.6:
+                c = dark
+            else:
+                c = colour
+            d.rectangle([x0 + x * scale, y0 + y * scale, x0 + (x + 1) * scale - 1, y0 + (y + 1) * scale - 1], fill=c + (255,))
+
+
+def fade(rgb, k=0.45):
+    return tuple(int(v * k + b * (1 - k)) for v, b in zip(rgb, BG[:3]))
+
+
+for name, colour in TIERS.items():
+    for state in ("next", "locked"):
+        border = GOLD if state == "next" else EDGE[:3]
+        c = card(81, 146, border, (15, 20, 27, 255))
+        vault(c, int(16.5 * S), 14 * S, colour if state == "next" else fade(colour), 3 * S)
+        d = ImageDraw.Draw(c)
+        bar = GOLD if state == "next" else (38, 44, 54)
+        d.rectangle([8 * S, 120 * S, 73 * S - 1, 134 * S - 1], fill=bar + (255,))
+        d.rectangle([8 * S, 132 * S, 73 * S - 1, 134 * S - 1], fill=tuple(int(v * 0.7) for v in bar) + (255,))
+        c.save(UI / f"tier_{name}_{state}.png")
+
+ins = Image.new("RGBA", (12 * S, 12 * S), (0, 0, 0, 0))
+draw_sprite(ins, SPRITES["insurance"], (52, 206, 140), 0, 0, S)
+ins.save(UI / "head_insurance.png")
+print("members + insurance textures written")

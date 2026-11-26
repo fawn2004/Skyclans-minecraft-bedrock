@@ -2,6 +2,8 @@ import { world } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 import { SCREEN, comingSoon, show } from "../forms.js";
 import { openSettingsMenu } from "./settingsMenu.js";
+import { openMembersMenu } from "./membersMenu.js";
+import { openInsuranceMenu } from "./insuranceMenu.js";
 
 const TILE = "textures/ui/skyclans/tile_";
 
@@ -11,8 +13,8 @@ const TILES = [
   { name: "Island Home", sub: "Teleport home", art: "home", open: (p) => comingSoon(p, "Island Home") },
   { name: "Raids", sub: "Attack islands", art: "raids", open: (p) => comingSoon(p, "Raids") },
   { name: "Sky Shop", sub: "Buy & sell", art: "shop", open: (p) => comingSoon(p, "Sky Shop") },
-  { name: "Insurance", sub: "No cover yet", art: "insurance", open: (p) => comingSoon(p, "Insurance") },
-  { name: "Members", sub: "Your clan", art: "members", open: (p) => comingSoon(p, "Members") },
+  { name: "Insurance", sub: "No cover yet", art: "insurance", open: (p) => openInsuranceMenu(p) },
+  { name: "Members", sub: "Your clan", art: "members", open: (p) => openMembersMenu(p) },
   { name: "Settings", sub: "Your options", art: "settings", open: (p) => openSettingsMenu(p) },
 ];
 

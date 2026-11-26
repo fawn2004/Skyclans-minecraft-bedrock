@@ -1,3 +1,3 @@
 {
-  "ui_defs": [ "ui/skyclans_menu.json" ]
+  "ui_defs": [ "ui/skyclans_menu.json", "ui/sc_members.json", "ui/sc_insurance.json" ]
 }

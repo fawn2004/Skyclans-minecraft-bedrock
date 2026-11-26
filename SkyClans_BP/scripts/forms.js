@@ -6,6 +6,8 @@ import { FormCancelationReason } from "@minecraft/server-ui";
 export const SCREEN = {
   main: "§s§c§1",
   settings: "§s§c§2",
+  members: "§s§c§3",
+  insurance: "§s§c§4",
 };
 
 /**
