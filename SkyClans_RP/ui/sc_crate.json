@@ -1,0 +1,238 @@
+// SkyClans crate opening (the spinning reel). Title marker "§s§c§8".
+//   title (after marker) -> big title, e.g. "§l§fCOMMON CRATE"
+//   body                 -> the result line, shown once the reel stops
+//   buttons 0-29         -> the reel slots (picture = prize icon, text = prize name); not pressable
+//                           The script puts the WON prize in slot 27.
+//   button 30            -> Collect / OK
+// The reel is one long row of 30 slots that slides left (spin anim) and eases to a
+// stop with slot 27 under the gold frame. Slot width 52, window 5 slots (260) wide:
+//   end offset = 2 slots in (104) - 27 * 52 = -1300
+{
+  "namespace": "sc_crate",
+
+  "spin": {
+    "anim_type": "offset",
+    "easing": "out_cubic",
+    "duration": 4.0,
+    "from": [ 0, 0 ],
+    "to": [ -1300, 0 ]
+  },
+
+  // hidden for 4 seconds (while the reel spins), then fades in
+  "after_spin": {
+    "anim_type": "alpha",
+    "duration": 4.0,
+    "from": 0,
+    "to": 0,
+    "next": "@sc_crate.fade_in"
+  },
+  "fade_in": {
+    "anim_type": "alpha",
+    "duration": 0.4,
+    "from": 0,
+    "to": 1
+  },
+
+  "screen": {
+    "type": "image",
+    "texture": "textures/ui/skyclans/shop_window",
+    "size": [ 352, 236 ],
+    "controls": [
+      {
+        "small_line": {
+          "type": "label",
+          "layer": 2,
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [ 8, 6 ],
+          "size": [ "default", "default" ],
+          "color": [ 0.62, 0.66, 0.72 ],
+          "font_scale_factor": 0.8,
+          "text": "SKYCLANS  ·  CRATE"
+        }
+      },
+      {
+        "big_title": {
+          "type": "label",
+          "layer": 2,
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [ 8, 18 ],
+          "size": [ "default", "default" ],
+          "font_scale_factor": 1.6,
+          "shadow": true,
+          "text": "#text",
+          "bindings": [
+            { "binding_name": "#title_text" },
+            { "binding_type": "view", "source_property_name": "(#title_text - '§s§c§8')", "target_property_name": "#text" }
+          ]
+        }
+      },
+      {
+        "reel_frame": {
+          "type": "image",
+          "texture": "textures/ui/skyclans/list_tile",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [ 42, 70 ],
+          "size": [ 268, 72 ],
+          "controls": [
+            {
+              "window": {
+                "type": "panel",
+                "anchor_from": "top_left",
+                "anchor_to": "top_left",
+                "offset": [ 4, 4 ],
+                "size": [ 260, 64 ],
+                "clips_children": true,
+                "layer": 1,
+                "controls": [
+                  {
+                    "strip": {
+                      "type": "grid",
+                      "anchor_from": "top_left",
+                      "anchor_to": "top_left",
+                      "size": [ 1560, 64 ],
+                      "grid_dimensions": [ 30, 1 ],
+                      "grid_item_template": "sc_crate.slot",
+                      "collection_name": "form_buttons",
+                      "maximum_grid_items": 30,
+                      "anims": [ "@sc_crate.spin" ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "pick": {
+          "type": "image",
+          "texture": "textures/ui/skyclans/reel_pick",
+          "layer": 4,
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [ 150, 72 ],
+          "size": [ 52, 68 ]
+        }
+      },
+      {
+        "result": {
+          "type": "label",
+          "layer": 2,
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "offset": [ 0, 156 ],
+          "size": [ 320, "default" ],
+          "text_alignment": "center",
+          "shadow": true,
+          "alpha": 0,
+          "text": "#form_text",
+          "bindings": [ { "binding_name": "#form_text" } ],
+          "anims": [ "@sc_crate.after_spin" ]
+        }
+      },
+      {
+        "buttons": {
+          "type": "collection_panel",
+          "collection_name": "form_buttons",
+          "size": [ "100%", "100%" ],
+          "layer": 5,
+          "controls": [ { "collect@sc_crate.collect_button": { "collection_index": 30 } } ]
+        }
+      },
+      {
+        "close@skyclans.close_button": {
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [ -8, 6 ],
+          "layer": 5
+        }
+      }
+    ]
+  },
+
+  // one prize on the reel (not a button)
+  "slot": {
+    "type": "panel",
+    "size": [ 52, 64 ],
+    "controls": [
+      {
+        "bg": {
+          "type": "image",
+          "texture": "textures/ui/skyclans/shop_cat",
+          "size": [ 48, 60 ],
+          "controls": [
+            {
+              "icon": {
+                "type": "image",
+                "layer": 1,
+                "anchor_from": "top_middle",
+                "anchor_to": "top_middle",
+                "offset": [ 0, 8 ],
+                "size": [ 22, 22 ],
+                "bindings": [
+                  { "binding_name": "#form_button_texture", "binding_name_override": "#texture", "binding_type": "collection", "binding_collection_name": "form_buttons" },
+                  { "binding_name": "#form_button_texture_file_system", "binding_name_override": "#texture_file_system", "binding_type": "collection", "binding_collection_name": "form_buttons" }
+                ]
+              }
+            },
+            {
+              "name": {
+                "type": "label",
+                "layer": 2,
+                "anchor_from": "bottom_middle",
+                "anchor_to": "bottom_middle",
+                "offset": [ 0, -5 ],
+                "size": [ 46, "default" ],
+                "text_alignment": "center",
+                "font_scale_factor": 0.55,
+                "shadow": true,
+                "text": "#form_button_text",
+                "bindings": [ { "binding_name": "#form_button_text", "binding_type": "collection", "binding_collection_name": "form_buttons" } ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  "collect_button": {
+    "type": "button",
+    "size": [ 70, 18 ],
+    "anchor_from": "top_middle",
+    "anchor_to": "top_middle",
+    "offset": [ 0, 196 ],
+    "alpha": 0,
+    "anims": [ "@sc_crate.after_spin" ],
+    "default_control": "default",
+    "hover_control": "hover",
+    "pressed_control": "pressed",
+    "sound_name": "random.click",
+    "focus_enabled": true,
+    "button_mappings": [
+      { "from_button_id": "button.menu_select", "to_button_id": "button.form_button_click", "mapping_type": "pressed" },
+      { "from_button_id": "button.menu_ok", "to_button_id": "button.form_button_click", "mapping_type": "focused" }
+    ],
+    "bindings": [ { "binding_type": "collection_details", "binding_collection_name": "form_buttons" } ],
+    "controls": [
+      { "default": { "type": "image", "texture": "textures/ui/skyclans/bar_gold" } },
+      { "hover": { "type": "image", "texture": "textures/ui/skyclans/shop_qty_gold_hover" } },
+      { "pressed": { "type": "image", "texture": "textures/ui/skyclans/shop_qty_gold_hover" } },
+      {
+        "text": {
+          "type": "label",
+          "layer": 2,
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "size": [ "default", "default" ],
+          "font_scale_factor": 0.8,
+          "text": "#form_button_text",
+          "bindings": [ { "binding_name": "#form_button_text", "binding_type": "collection", "binding_collection_name": "form_buttons" } ]
+        }
+      }
+    ]
+  }
+}

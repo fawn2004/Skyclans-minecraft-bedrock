@@ -581,3 +581,35 @@ for name, rows, col in (("icon_upgrade", UP, (52, 206, 140)), ("icon_pickup", UP
     draw_sprite(img, rows, col, 0, 0, 4)
     img.save(UI / f"{name}.png")
 print("v0.8 textures written")
+
+
+# ---------------------------------------------------------------- v0.11 crates
+KEY = [
+    "..####..........",
+    ".#....#.........",
+    "#..##..#........",
+    "#.#..#.#########",
+    "#.#..#.#########",
+    "#..##..#...#.#..",
+    ".#....#....#.#..",
+    "..####.....#....",
+]
+for name, col in (("common", (190, 196, 206)), ("rare", (64, 196, 230)), ("legendary", (240, 186, 64))):
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    draw_sprite(img, KEY, col, 0, 4, 1)
+    img.save(ITEMS / f"key_{name}.png")
+
+# gold frame that marks the winning slot on the reel (see-through middle)
+pick = Image.new("RGBA", (52 * S, 68 * S), (0, 0, 0, 0))
+ImageDraw.Draw(pick).rectangle([0, 0, 52 * S - 1, 68 * S - 1], outline=GOLD + (255,), width=2 * S)
+pick.save(UI / "reel_pick.png")
+
+# money prize icon
+coin = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+d = ImageDraw.Draw(coin)
+d.ellipse([1, 1, 14, 14], fill=(240, 186, 64, 255), outline=(170, 120, 30, 255))
+d.rectangle([7, 4, 8, 11], fill=(170, 120, 30, 255))
+d.rectangle([5, 5, 10, 6], fill=(170, 120, 30, 255))
+d.rectangle([5, 9, 10, 10], fill=(170, 120, 30, 255))
+coin.save(UI / "coin.png")
+print("v0.11 textures written")

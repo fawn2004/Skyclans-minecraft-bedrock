@@ -55,6 +55,15 @@
     },
     "skyclans_head_iron_golem": {
       "textures": "textures/items/heads/iron_golem"
+    },
+    "skyclans_key_common": {
+      "textures": "textures/items/key_common"
+    },
+    "skyclans_key_rare": {
+      "textures": "textures/items/key_rare"
+    },
+    "skyclans_key_legendary": {
+      "textures": "textures/items/key_legendary"
     }
   }
 }

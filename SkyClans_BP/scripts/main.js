@@ -6,6 +6,7 @@ import { registerSidebar } from "./sidebar.js";
 import { registerPlayerSettings } from "./playerSettings.js";
 import { addMoney, fmt, fmtExact, getBalance, takeMoney } from "./money.js";
 import { getStartingMoney } from "./serverSettings.js";
+import { crateMenu, crateOfKey } from "./crates.js";
 
 registerSpawners();
 registerSidebar();
@@ -13,10 +14,14 @@ registerPlayerSettings();
 
 const MENU_ITEM = "skyclans:menu";
 
-// Using the SkyClans Menu item opens the main menu.
+// Using the SkyClans Menu item opens the main menu; using a crate key opens its crate.
 world.afterEvents.itemUse.subscribe(({ source, itemStack }) => {
-  if (itemStack?.typeId !== MENU_ITEM) return;
-  openMainMenu(source).catch((e) => console.warn(`[SkyClans] main menu error: ${e}`));
+  if (itemStack?.typeId === MENU_ITEM) {
+    openMainMenu(source).catch((e) => console.warn(`[SkyClans] main menu error: ${e}`));
+    return;
+  }
+  const crate = crateOfKey(itemStack?.typeId);
+  if (crate) crateMenu(source, crate).catch((e) => console.warn(`[SkyClans] crate error: ${e}`));
 });
 
 // New players get the menu item and the starting money, once.

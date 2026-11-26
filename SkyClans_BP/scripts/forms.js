@@ -10,7 +10,8 @@ export const SCREEN = {
   insurance: "§s§c§4",
   raid: "§s§c§5",
   list: "§s§c§6", // simple tile grid (Sky Shop, admin menu)
-  spawner: "§s§c§7", // spawner menu: info panel + tiles
+  spawner: "§s§c§7", // info panel + tiles (spawner menu, kit details, crate prizes)
+  crate: "§s§c§8", // crate opening: spinning reel
 };
 
 export const NAV = "textures/ui/skyclans/nav_";

@@ -5,7 +5,8 @@
 //   "§s§c§4"  -> SkyClans insurance menu (sc_insurance.screen)
 //   "§s§c§5"  -> SkyClans raid dispatch  (sc_raid.screen)
 //   "§s§c§6"  -> SkyClans tile list      (sc_list.screen) - Sky Shop, admin menu
-//   "§s§c§7"  -> SkyClans spawner menu   (sc_spawner.screen)
+//   "§s§c§7"  -> SkyClans spawner menu   (sc_spawner.screen) - also kit details, crate prizes
+//   "§s§c§8"  -> SkyClans crate opening  (sc_crate.screen)
 //   anything without "§s§c" -> the normal vanilla form, so other add-ons are unaffected
 {
   "namespace": "server_form",
@@ -120,6 +121,18 @@
             {
               "binding_type": "view",
               "source_property_name": "(not ((#title_text - '§s§c§7') = #title_text))",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      },
+      {
+        "skyclans_crate@sc_crate.screen": {
+          "bindings": [
+            { "binding_name": "#title_text" },
+            {
+              "binding_type": "view",
+              "source_property_name": "(not ((#title_text - '§s§c§8') = #title_text))",
               "target_property_name": "#visible"
             }
           ]

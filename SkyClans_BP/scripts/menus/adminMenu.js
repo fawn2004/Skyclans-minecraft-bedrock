@@ -4,6 +4,7 @@ import { SPAWNERS } from "../spawnerConfig.js";
 import { fail, show, success, tilePages } from "../forms.js";
 import { giveSpawner } from "../spawners.js";
 import { giveKitMenu } from "../kits.js";
+import { crateKeyTiles } from "../crates.js";
 import { addMoney, fmt, fmtExact, getBalance, setBalance } from "../money.js";
 import { getSpawn, getStartingMoney, setSidebarEnabled, setSpawnHere, setStartingMoney, sidebarEnabled } from "../serverSettings.js";
 import { clearSidebars } from "../sidebar.js";
@@ -22,6 +23,7 @@ export function openAdminMenu(player) {
       { text: "Money\n§7Give / take / set", icon: "textures/items/gold_ingot", onClick: () => moneyPlayers(player) },
       { text: "Give Spawner\n§7For testing", icon: "textures/blocks/mob_spawner", onClick: () => giveSpawnerMenu(player) },
       { text: "Give Kit\n§7For testing", icon: "textures/items/diamond_chestplate", onClick: () => giveKitMenu(player, toAdmin(player)) },
+      { text: "Give Keys\n§7Crate keys", icon: "textures/items/key_legendary", onClick: () => giveKeysMenu(player) },
       {
         text: `Set Spawn Here\n§7Now ${sp.x} ${sp.y} ${sp.z}`,
         icon: "textures/items/compass_item",
@@ -112,6 +114,16 @@ async function startingMoney(player) {
     } else fail(player, "That's not a valid amount.");
   }
   return openAdminMenu(player);
+}
+
+// ---- give keys ---------------------------------------------------------------------
+function giveKeysMenu(player) {
+  return tilePages(player, {
+    title: "GIVE KEYS",
+    body: "§7Tap a key to get one",
+    tiles: crateKeyTiles(player, () => giveKeysMenu(player)),
+    back: toAdmin(player),
+  });
 }
 
 // ---- give spawner ----------------------------------------------------------------
