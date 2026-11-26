@@ -1,6 +1,7 @@
 import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 import { SCREEN, comingSoon, show } from "../forms.js";
 import { openMainMenu } from "./mainMenu.js";
+import { SPAWNERS } from "../spawnerConfig.js";
 
 // Sky Shop: a tree of pages drawn with the simple tile grid (resource pack ui/sc_list.json).
 //
@@ -20,7 +21,12 @@ const SHOP = {
   name: "Sky Shop",
   children: [
     { name: "Raid Gear", icon: "textures/items/diamond_sword", children: [] },
-    { name: "Spawners", icon: "textures/blocks/mob_spawner", children: [] },
+    {
+      name: "Spawners",
+      icon: "textures/blocks/mob_spawner",
+      // all 24 from spawnerConfig.js (prices are set there)
+      children: SPAWNERS.map((s) => ({ name: `${s.name} Spawner`, icon: s.icon, price: s.price, spawner: s.mob })),
+    },
     { name: "Ores", icon: "textures/blocks/diamond_ore", children: [] },
     { name: "Farming", icon: "textures/items/wheat", children: [] },
     {
@@ -56,9 +62,10 @@ const SHOP = {
 const balanceLine = () => "Balance §e$0"; // placeholder until money exists
 const isCategory = (e) => Array.isArray(e.children);
 const isItem = (e) => typeof e.price === "number";
+const money = (n) => "$" + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 function tileText(e) {
-  if (isItem(e)) return `${e.name}\n§a$${e.price} §feach`;
+  if (isItem(e)) return `${e.name}\n§a${money(e.price)}${e.spawner ? "" : " §feach"}`;
   if (isCategory(e)) {
     const n = e.children.length;
     if (n === 0) return `${e.name}\n§8Empty`;

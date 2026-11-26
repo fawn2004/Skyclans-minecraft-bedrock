@@ -561,3 +561,23 @@ for name, rows, col in (("nav_back", ARROW, (190, 196, 206)), ("nav_prev", ARROW
     draw_sprite(img, rows, col, 0, 6, 4)
     img.save(UI / f"{name}.png")
 print("v0.6 textures written")
+
+
+# ---------------------------------------------------------------- v0.8 spawner menu icons
+UP = [
+    "....##....",
+    "...####...",
+    "..######..",
+    ".########.",
+    "##########",
+    "...####...",
+    "...####...",
+    "...####...",
+    "...####...",
+    "...####...",
+]
+for name, rows, col in (("icon_upgrade", UP, (52, 206, 140)), ("icon_pickup", UP[::-1], RED)):
+    img = Image.new("RGBA", (40, 40), (0, 0, 0, 0))
+    draw_sprite(img, rows, col, 0, 0, 4)
+    img.save(UI / f"{name}.png")
+print("v0.8 textures written")

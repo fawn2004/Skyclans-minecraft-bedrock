@@ -4,6 +4,7 @@
     "ui/sc_members.json",
     "ui/sc_insurance.json",
     "ui/sc_raid.json",
-    "ui/sc_list.json"
+    "ui/sc_list.json",
+    "ui/sc_spawner.json"
   ]
 }

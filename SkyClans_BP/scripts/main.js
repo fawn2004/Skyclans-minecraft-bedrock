@@ -1,6 +1,9 @@
 import { CommandPermissionLevel, CustomCommandStatus, system, world } from "@minecraft/server";
 import { openMainMenu } from "./menus/mainMenu.js";
 import { openAdminMenu } from "./menus/adminMenu.js";
+import { registerSpawners } from "./spawners.js";
+
+registerSpawners();
 
 const MENU_ITEM = "skyclans:menu";
 

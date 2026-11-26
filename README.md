@@ -5,7 +5,7 @@ Clans add-on for Minecraft Bedrock skyblock. Built one menu at a time: each menu
 ## Install
 Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on both packs (behaviour + resources) in the world. Beta APIs are **not** needed.
 
-## What works so far (v0.7.3)
+## What works so far (v0.8.0)
 - **SkyClans Menu** item, given once to each new player, or `/give @s skyclans:menu`. Use it to open the main menu.
 - **Main menu:** Island Home, Raids, Sky Shop, Insurance, Members and Settings. Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home says "coming soon".
 - **Settings screen:** 4 cards (Chunk Borders, Full Bright, Raid Alert Sound, Coordinates), all "coming soon" for now, plus a back arrow next to the X.
@@ -13,7 +13,9 @@ Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on 
 - **Insurance Vault:** Basic / Silver / Gold / Diamond tiers (Basic next, the rest locked), Last claim and Covers strips. Buying is "coming soon".
 - **Raid Dispatch:** Normal / Intel / Cheap raid cards, Wins / Losses / Streak chips and the Your Squad panel. Buying and scouting are "coming soon".
 - **Sky Shop:** simple tile grid of pages. Raid Gear, Spawners, Ores, Farming, Blocks (-> Blocks / Wood / Lights / Coloured Blocks / Redstone), Food, Search, Sell. Every category opens its page (empty ones say "Nothing here yet"); Search finds items by name. Only Blocks > Blocks has placeholder items; buying and selling are "coming soon". The shop list is at the top of `SkyClans_BP/scripts/menus/shopMenu.js`.
-- **`/admin`** (operators only) opens a placeholder admin menu.
+- **`/admin`** (operators only): admin menu with **Give Spawner** (all 24, for testing).
+
+- **Spawners:** 24 custom spawners (same as Skyblock Economy). Place one, then sneak + tap it for its menu (SkyClans colours): Upgrade (paid with that mob's heads), Add heads, Add stack, Pick up. Stack up to 16, 10 levels, mobs stack and stand still, killed mobs can drop Enchanted Heads. Can't be mined or blown up. Settings in `SkyClans_BP/scripts/spawnerConfig.js`. Listed in Shop > Spawners (buying coming soon).
 
 ## Layout
 - `SkyClans_BP/scripts/main.js` – item use, first-join item, `/admin` command

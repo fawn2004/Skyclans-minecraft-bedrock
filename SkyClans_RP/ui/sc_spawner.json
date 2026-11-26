@@ -1,0 +1,95 @@
+// SkyClans spawner menu. Title marker "§s§c§7".
+//   title (after marker) -> big title, e.g. "§l§fPIG SPAWNER"
+//   body                 -> info panel on the left (owner, stack, level, heads...)
+//   buttons              -> tiles on the right, 2 per row (same tiles as the shop)
+{
+  "namespace": "sc_spawner",
+
+  "screen": {
+    "type": "image",
+    "texture": "textures/ui/skyclans/shop_window",
+    "size": [ 352, 236 ],
+    "controls": [
+      {
+        "small_line": {
+          "type": "label",
+          "layer": 2,
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [ 8, 6 ],
+          "size": [ "default", "default" ],
+          "color": [ 0.62, 0.66, 0.72 ],
+          "font_scale_factor": 0.8,
+          "text": "SKYCLANS  ·  SPAWNER"
+        }
+      },
+      {
+        "big_title": {
+          "type": "label",
+          "layer": 2,
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [ 8, 18 ],
+          "size": [ "default", "default" ],
+          "font_scale_factor": 1.6,
+          "shadow": true,
+          "text": "#text",
+          "bindings": [
+            { "binding_name": "#title_text" },
+            { "binding_type": "view", "source_property_name": "(#title_text - '§s§c§7')", "target_property_name": "#text" }
+          ]
+        }
+      },
+      {
+        "info_panel": {
+          "type": "image",
+          "texture": "textures/ui/skyclans/list_tile",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [ 8, 46 ],
+          "size": [ 160, 180 ],
+          "controls": [
+            {
+              "info": {
+                "type": "label",
+                "layer": 2,
+                "anchor_from": "top_left",
+                "anchor_to": "top_left",
+                "offset": [ 7, 7 ],
+                "size": [ 146, "default" ],
+                "font_scale_factor": 0.75,
+                "color": [ 0.9, 0.92, 0.95 ],
+                "text": "#form_text",
+                "bindings": [ { "binding_name": "#form_text" } ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "grid": {
+          "type": "grid",
+          "layer": 2,
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [ 174, 46 ],
+          "size": [ 168, "default" ],
+          "grid_rescaling_type": "horizontal",
+          "grid_item_template": "sc_list.tile",
+          "collection_name": "form_buttons",
+          "bindings": [
+            { "binding_name": "#form_button_length", "binding_name_override": "#maximum_grid_items" }
+          ]
+        }
+      },
+      {
+        "close@skyclans.close_button": {
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [ -8, 6 ],
+          "layer": 5
+        }
+      }
+    ]
+  }
+}
