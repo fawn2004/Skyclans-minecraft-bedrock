@@ -8,6 +8,8 @@ export const SCREEN = {
   settings: "§s§c§2",
   members: "§s§c§3",
   insurance: "§s§c§4",
+  raid: "§s§c§5",
+  shop: "§s§c§6",
 };
 
 /**

@@ -429,3 +429,109 @@ ins = Image.new("RGBA", (12 * S, 12 * S), (0, 0, 0, 0))
 draw_sprite(ins, SPRITES["insurance"], (52, 206, 140), 0, 0, S)
 ins.save(UI / "head_insurance.png")
 print("members + insurance textures written")
+
+
+# ---------------------------------------------------------------- Raid Dispatch
+RED = (236, 84, 76)
+PANEL = (20, 18, 18, 255)        # warm dark like the war table
+PANEL_IN = (14, 12, 12, 255)
+EDGE_W = (58, 52, 50)
+
+EYE = [
+    "............",
+    "....####....",
+    "..##....##..",
+    ".#...##...#.",
+    "#...####...#",
+    "#...####...#",
+    ".#...##...#.",
+    "..##....##..",
+    "....####....",
+    "............",
+]
+BROKEN_SHIELD = [
+    "############",
+    "#....#.....#",
+    "#....#.....#",
+    "#.....#....#",
+    "#....#.....#",
+    "#...#......#",
+    "#....#.....#",
+    ".#....#...#.",
+    ".#...#....#.",
+    "..#..#...#..",
+    "...##.###...",
+    ".....##.....",
+]
+QUESTION = [
+    "..####..",
+    ".##..##.",
+    ".....##.",
+    "....##..",
+    "...##...",
+    "...##...",
+    "........",
+    "...##...",
+]
+SKULL = [
+    ".######.",
+    "########",
+    "#..##..#",
+    "#..##..#",
+    "########",
+    ".##..##.",
+    ".######.",
+    ".#.##.#.",
+]
+
+for name, border, icon, icol in (
+    ("normal", EDGE_W, SPRITES["raids"], RED),
+    ("intel", GOLD, EYE, GOLD),
+    ("cheap", EDGE_W, BROKEN_SHIELD, RED),
+):
+    c = card(80, 180, border, PANEL)
+    draw_sprite(c, icon, icol, 5 * S, 14 * S, S)
+    d = ImageDraw.Draw(c)
+    d.rectangle([5 * S, 28 * S, 75 * S - 1, 108 * S - 1], fill=PANEL_IN, outline=EDGE_W + (255,), width=S)
+    if name == "normal":
+        d.rectangle([26 * S, 70 * S, 54 * S - 1, 98 * S - 1], fill=(60, 50, 44, 255))
+        draw_sprite(c, QUESTION, GOLD, 32 * S, 76 * S, 2 * S)
+    if name == "cheap":
+        draw_sprite(c, BROKEN_SHIELD, RED, 28 * S, 74 * S, 2 * S)
+    c.save(UI / f"raid_{name}.png")
+
+for name, col in (("bar_gold", GOLD), ("bar_red", RED)):
+    b = Image.new("RGBA", (70 * S, 16 * S), col + (255,))
+    ImageDraw.Draw(b).rectangle([0, 13 * S, 70 * S - 1, 16 * S - 1], fill=tuple(int(v * 0.7) for v in col) + (255,))
+    b.save(UI / f"{name}.png")
+
+for name, icon, col in (("wins", SPRITES["raids"], RED), ("losses", SKULL, RED), ("streak", SPRITES["insurance"], (52, 206, 140))):
+    c = card(50, 14, EDGE_W, PANEL)
+    draw_sprite(c, icon, col, 3 * S, (14 * S - len(icon) * S) // 2, S)
+    c.save(UI / f"stat_{name}.png")
+
+card(84, 180, EDGE_W, PANEL).save(UI / "squad_panel.png")
+row = card(74, 18, EDGE_W, PANEL_IN)
+face(row, 3 * S, 3 * S, int(1.5 * S))
+row.save(UI / "squad_row.png")
+
+
+# ---------------------------------------------------------------- Sky Shop
+NAVY = (22, 30, 48, 255)
+NAVY_IN = (14, 20, 34, 255)
+NAVY_EDGE = (48, 62, 90)
+
+c = card(60, 78, NAVY_EDGE, NAVY)
+ImageDraw.Draw(c).rectangle([3 * S, 3 * S, 57 * S - 1, 33 * S - 1], fill=NAVY_IN)
+c.save(UI / "shop_card.png")
+card(76, 14, NAVY_EDGE, NAVY).save(UI / "shop_cat.png")
+card(76, 14, (78, 96, 130), (32, 42, 64, 255)).save(UI / "shop_cat_hover.png")
+for name, fill, edge in (("qty", (34, 44, 66, 255), NAVY_EDGE), ("qty_gold", GOLD + (255,), (200, 150, 40))):
+    card(16, 11, edge, fill).save(UI / f"shop_{name}.png")
+card(254, 26, NAVY_EDGE, NAVY).save(UI / "shop_header.png")
+card(32, 12, GOLD, (30, 26, 14, 255)).save(UI / "shop_badge.png")
+card(34, 12, NAVY_EDGE, NAVY).save(UI / "shop_pager.png")
+card(34, 12, (78, 96, 130), (32, 42, 64, 255)).save(UI / "shop_pager_hover.png")
+card(28, 12, NAVY_EDGE, NAVY_IN).save(UI / "shop_page.png")
+card(352, 236, (40, 50, 72), (16, 22, 36, 245)).save(UI / "shop_window.png")
+print("raid + shop textures written")

@@ -1,3 +1,9 @@
 {
-  "ui_defs": [ "ui/skyclans_menu.json", "ui/sc_members.json", "ui/sc_insurance.json" ]
+  "ui_defs": [
+    "ui/skyclans_menu.json",
+    "ui/sc_members.json",
+    "ui/sc_insurance.json",
+    "ui/sc_raid.json",
+    "ui/sc_shop.json"
+  ]
 }

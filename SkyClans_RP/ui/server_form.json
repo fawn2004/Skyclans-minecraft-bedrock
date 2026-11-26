@@ -3,6 +3,8 @@
 //   "§s§c§2"  -> SkyClans settings menu  (skyclans.settings_screen)
 //   "§s§c§3"  -> SkyClans members menu   (sc_members.screen)
 //   "§s§c§4"  -> SkyClans insurance menu (sc_insurance.screen)
+//   "§s§c§5"  -> SkyClans raid dispatch  (sc_raid.screen)
+//   "§s§c§6"  -> SkyClans sky shop       (sc_shop.screen)
 //   anything without "§s§c" -> the normal vanilla form, so other add-ons are unaffected
 {
   "namespace": "server_form",
@@ -81,6 +83,30 @@
             {
               "binding_type": "view",
               "source_property_name": "(not ((#title_text - '§s§c§4') = #title_text))",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      },
+      {
+        "skyclans_raid@sc_raid.screen": {
+          "bindings": [
+            { "binding_name": "#title_text" },
+            {
+              "binding_type": "view",
+              "source_property_name": "(not ((#title_text - '§s§c§5') = #title_text))",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      },
+      {
+        "skyclans_shop@sc_shop.screen": {
+          "bindings": [
+            { "binding_name": "#title_text" },
+            {
+              "binding_type": "view",
+              "source_property_name": "(not ((#title_text - '§s§c§6') = #title_text))",
               "target_property_name": "#visible"
             }
           ]
