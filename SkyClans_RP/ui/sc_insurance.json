@@ -80,6 +80,7 @@
             {
               "r": {
                 "type": "label",
+                "layer": 2,
                 "anchor_from": "right_middle",
                 "anchor_to": "right_middle",
                 "offset": [ -6, 0 ],
@@ -148,6 +149,7 @@
 
   "strip_label": {
     "type": "label",
+    "layer": 2,
     "size": [ "default", "default" ],
     "font_scale_factor": 0.7,
     "color": [ 0.85, 0.87, 0.9 ]

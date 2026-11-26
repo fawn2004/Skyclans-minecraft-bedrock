@@ -73,6 +73,7 @@
             {
               "face": {
                 "type": "image",
+                "layer": 1,
                 "texture": "textures/ui/skyclans/face",
                 "anchor_from": "top_left",
                 "anchor_to": "top_left",
@@ -83,6 +84,7 @@
             {
               "info": {
                 "type": "label",
+                "layer": 2,
                 "anchor_from": "top_left",
                 "anchor_to": "top_left",
                 "offset": [ 28, 18 ],
@@ -149,6 +151,7 @@
 
   "row_label": {
     "type": "label",
+    "layer": 2,
     "anchor_from": "top_left",
     "anchor_to": "top_left",
     "size": [ "default", "default" ],
@@ -158,6 +161,7 @@
 
   "col_label": {
     "type": "label",
+    "layer": 2,
     "anchor_from": "top_left",
     "anchor_to": "top_left",
     "size": [ 24, 10 ],
@@ -167,6 +171,7 @@
 
   "perm_label": {
     "type": "label",
+    "layer": 2,
     "anchor_from": "top_left",
     "anchor_to": "top_left",
     "size": [ "default", "default" ],

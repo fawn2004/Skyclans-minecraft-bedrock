@@ -535,3 +535,18 @@ card(34, 12, (78, 96, 130), (32, 42, 64, 255)).save(UI / "shop_pager_hover.png")
 card(28, 12, NAVY_EDGE, NAVY_IN).save(UI / "shop_page.png")
 card(352, 236, (40, 50, 72), (16, 22, 36, 245)).save(UI / "shop_window.png")
 print("raid + shop textures written")
+
+
+# ---------------------------------------------------------------- v0.5 tweaks
+# Stat chips: drawn at 3 texture px per GUI unit so the icon can be 8 units (fits the 14-unit chip).
+for name, icon, col in (("wins", SPRITES["raids"], RED), ("losses", SKULL, RED), ("streak", SPRITES["insurance"], (52, 206, 140))):
+    c = Image.new("RGBA", (150, 42), PANEL)
+    ImageDraw.Draw(c).rectangle([0, 0, 149, 41], outline=EDGE_W + (255,), width=3)
+    size = len(icon) * 2
+    draw_sprite(c, icon, col, 9, (42 - size) // 2, 2)
+    c.save(UI / f"stat_{name}.png")
+
+# Hover look for the quantity buttons
+card(16, 11, (110, 130, 170), (52, 66, 96, 255)).save(UI / "shop_qty_hover.png")
+card(16, 11, (255, 230, 150), (255, 212, 110, 255)).save(UI / "shop_qty_gold_hover.png")
+print("v0.5 textures written")
