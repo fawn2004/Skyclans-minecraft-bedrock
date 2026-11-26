@@ -357,7 +357,34 @@ function freeze(e) {
   try {
     if (!e.getEffect("slowness")) e.addEffect("slowness", 20000000, { amplifier: 255, showParticles: false });
     if (!e.getEffect("fire_resistance")) e.addEffect("fire_resistance", 20000000, { amplifier: 0, showParticles: false });
+    // harmless: max Weakness = melee hits do no damage
+    if (S.harmlessMobs && !e.getEffect("weakness")) e.addEffect("weakness", 20000000, { amplifier: 255, showParticles: false });
   } catch {}
+  // harmless creepers: keep resetting the fuse so they never go off
+  if (S.harmlessMobs && e.typeId === "minecraft:creeper") {
+    try {
+      e.triggerEvent("minecraft:stop_exploding");
+    } catch {}
+  }
+}
+
+// Things spawner mobs can shoot or throw - removed straight away when harmlessMobs is on.
+const PROJECTILES = new Set([
+  "minecraft:arrow", "minecraft:fireball", "minecraft:small_fireball", "minecraft:splash_potion",
+  "minecraft:lingering_potion", "minecraft:wither_skull", "minecraft:wither_skull_dangerous",
+]);
+
+function firedBySpawnerMob(projectile) {
+  try {
+    const owner = projectile.getComponent("minecraft:projectile")?.owner;
+    if (owner) return owner.hasTag(MOB_TAG);
+  } catch {}
+  // no owner info: anything fired right next to a spawner mob counts
+  try {
+    return projectile.dimension.getEntities({ tags: [MOB_TAG], location: projectile.location, maxDistance: 3 }).length > 0;
+  } catch {
+    return false;
+  }
 }
 
 function tagMob(e, key, mob, n, anchor) {
@@ -541,15 +568,30 @@ export function registerSpawners() {
     system.run(() => p.sendMessage("§7Spawners can't be mined. §fSneak and tap it §7and press §cPick up§7."));
   });
 
-  // ...or blown up
+  // ...or blown up. Spawner mobs (creepers) can't cause explosions at all when harmless.
   world.beforeEvents.explosion.subscribe((ev) => {
+    if (S.harmlessMobs) {
+      try {
+        if (ev.source?.hasTag(MOB_TAG)) {
+          ev.cancel = true;
+          return;
+        }
+      } catch {}
+    }
     const blocks = ev.getImpactedBlocks();
     const keep = blocks.filter((b) => !(b.typeId === SPAWNER_BLOCK && spawners.has(keyOf(b.dimension.id, b.location))));
     if (keep.length !== blocks.length) ev.setImpactedBlocks(keep);
   });
 
-  // remove the pieces a stacked slime / magma cube splits into
+  // remove the pieces a stacked slime / magma cube splits into,
+  // and anything a spawner mob shoots or throws (harmlessMobs)
   world.afterEvents.entitySpawn.subscribe(({ entity }) => {
+    try {
+      if (S.harmlessMobs && PROJECTILES.has(entity.typeId) && firedBySpawnerMob(entity)) {
+        entity.remove();
+        return;
+      }
+    } catch {}
     try {
       if (!SIZE_EVENT[entity.typeId] || entity.getDynamicProperty("skyclans:sp")) return;
       const now = system.currentTick;

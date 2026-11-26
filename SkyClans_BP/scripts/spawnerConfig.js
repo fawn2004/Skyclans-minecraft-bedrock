@@ -36,6 +36,7 @@ export const SPAWNER_SETTINGS = {
   stackMobs: true, // merge spawned mobs into one mob with a counter
   maxMobStack: 0, // most mobs one stacked mob can hold (0 = no limit)
   freezeMobs: true, // spawner mobs stand still (and don't burn in daylight)
+  harmlessMobs: true, // spawner mobs can't hurt anyone: no melee, no shooting/throwing, creepers never explode
   mergeRadius: 8, // how close a stacked mob must be to the spawner to merge
   maxLooseMobs: 12, // if stackMobs is false: most loose mobs per spawner
   costTimesStack: true, // upgrade cost x stack size (stops upgrade-then-stack tricks)
