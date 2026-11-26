@@ -59,8 +59,9 @@
           "anchor_from": "top_middle",
           "anchor_to": "top_middle",
           "offset": [ 0, 46 ],
-          "size": [ 336, 180 ],
-          "grid_dimensions": [ 4, 3 ],
+          // width fits 4 tiles; rows are only added for tiles that exist (no empty boxes)
+          "size": [ 336, "default" ],
+          "grid_rescaling_type": "horizontal",
           "grid_item_template": "sc_list.tile",
           "collection_name": "form_buttons",
           "bindings": [
