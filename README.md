@@ -21,7 +21,8 @@ Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on 
 - Members, Insurance and Raid Dispatch screens show placeholder data until clans exist.
 
 ## Layout
-- `SkyClans_BP/scripts/main.js` – item use, first-join item, `/admin` command
+- `SkyClans_BP/scripts/main.js` – item use (menu item, crate keys), first-join item and money
+- `SkyClans_BP/scripts/commands.js` – every /command
 - `SkyClans_BP/scripts/menus/` – one file per menu
 - `SkyClans_RP/ui/skyclans_menu.json` – the custom menu layout
 - `SkyClans_RP/ui/server_form.json` – uses the SkyClans layout only for forms whose title starts with `§s§c`; every other form stays vanilla
