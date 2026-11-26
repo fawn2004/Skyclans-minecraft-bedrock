@@ -7,11 +7,15 @@ import { addMoney, fmt } from "./money.js";
 import { getStartingMoney } from "./serverSettings.js";
 import { crateMenu, crateOfKey } from "./crates.js";
 import { registerCommands } from "./commands.js";
+import { loadClans } from "./clans.js";
+import { registerIslands } from "./islands.js";
 
 registerSpawners();
 registerSidebar();
 registerPlayerSettings();
 registerCommands(); // all the /commands are in commands.js
+registerIslands(); // island protection
+world.afterEvents.worldLoad.subscribe(() => loadClans());
 
 const MENU_ITEM = "skyclans:menu";
 

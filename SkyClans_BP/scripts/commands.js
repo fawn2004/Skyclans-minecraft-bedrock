@@ -9,11 +9,16 @@ import { isAdmin } from "./spawners.js";
 import { pref, setPref } from "./playerSettings.js";
 import { addMoney, fmt, fmtExact, getBalance, setBalance, takeMoney, topBalances } from "./money.js";
 import { getSpawn, setSpawnHere } from "./serverSettings.js";
+import { RANKS, clanOf, invite, membersOf, onlineMembers, promote, demote, setHome, transfer, deposit, withdraw } from "./clans.js";
+import { goHome } from "./islands.js";
+import { bankMenu, clanSetupMenu, confirmKick, confirmLeaveOrDisband, createClanForm, joinByName, openMembersMenu, tellClan } from "./menus/membersMenu.js";
 
 // ============================================================================
 //  COMMANDS
 //  Players:  /spawn /menu /shop /sell <hand|all> /bal /baltop /pay /kits
 //            /crates /settings /coords
+//            /is <create|home|sethome|invite|join|leave|kick|promote|demote|transfer|
+//                 info|members|bank|deposit|withdraw|disband> [name / amount]
 //  Admins (players with the "admin" tag - /tag <name> add admin):
 //            /admin /eco /givekey /setspawn /broadcast
 //  Typed without the "skyclans:" part, e.g. /spawn. Cheats don't need to be on.
@@ -122,6 +127,16 @@ export function registerCommands() {
       ]
     );
 
+    // ---- islands & clans: /is <action> [name or amount] ------------------------------------
+    reg.registerEnum("skyclans:isaction", IS_ACTIONS);
+    cmd(
+      "is",
+      "Your clan and island: /is home, /is invite <player>, /is create <name> ...",
+      playerOnly((p, action, ...words) => isCommand(p, action, words.filter((w) => w !== undefined).join(" ").trim())),
+      [{ name: "skyclans:isaction", type: P.Enum }],
+      Array.from({ length: 6 }, (_, i) => ({ name: i ? `word${i + 1}` : "name", type: P.String }))
+    );
+
     // ---- admins ("admin" tag) ---------------------------------------------------------
     cmd(
       "admin",
@@ -186,4 +201,102 @@ export function registerCommands() {
       Array.from({ length: 15 }, (_, i) => ({ name: `word${i + 2}`, type: P.String }))
     );
   });
+}
+
+// ---- /is --------------------------------------------------------------------------------
+const IS_ACTIONS = [
+  "create", "home", "sethome", "invite", "join", "leave", "kick", "promote", "demote",
+  "transfer", "info", "members", "bank", "deposit", "withdraw", "disband",
+];
+
+const fail = (p, msg) => p.sendMessage(`§c✘ ${msg}`);
+const ok = (p, msg) => p.sendMessage(`§a✔ ${msg}`);
+const amountOf = (text) => Math.floor(Number(String(text).replace(/[,$\s]/g, "")));
+
+/** A member of the player's clan by name (online or not). */
+function memberByName(clan, name) {
+  return membersOf(clan).find((m) => m.name.toLowerCase() === name.toLowerCase());
+}
+
+function isCommand(p, action, text) {
+  const clan = clanOf(p);
+  const needClan = () => {
+    fail(p, "You're not in a clan. /is create <name> to start one.");
+    return false;
+  };
+  switch (action) {
+    case "create":
+      return createClanForm(p, text || undefined);
+    case "home":
+      return clan ? goHome(p) : clanSetupMenu(p);
+    case "join":
+      if (!text) return clanSetupMenu(p);
+      return joinByName(p, text);
+    case "members":
+      return openMembersMenu(p);
+    case "bank":
+      return clan ? bankMenu(p) : needClan();
+    case "leave":
+    case "disband":
+      return confirmLeaveOrDisband(p);
+    case "kick":
+      if (!clan) return needClan();
+      if (!text) return fail(p, "Who? /is kick <name>");
+      return confirmKick(p, text);
+  }
+  if (!clan) return needClan();
+  let err;
+  switch (action) {
+    case "sethome":
+      err = setHome(p);
+      if (!err) ok(p, "Island home set here.");
+      break;
+    case "invite": {
+      const target = world.getAllPlayers().find((x) => x.name.toLowerCase() === text.toLowerCase());
+      if (!target) return fail(p, text ? `${text} isn't online.` : "Who? /is invite <name>");
+      err = invite(p, target);
+      if (!err) {
+        ok(p, `Invited ${target.name}.`);
+        target.sendMessage(`§b[SkyClans] §f${p.name} §7invited you to §f${clan.name}§7. Type §f/is join ${clan.name} §7(5 minutes).`);
+      }
+      break;
+    }
+    case "promote":
+    case "demote":
+    case "transfer": {
+      const m = memberByName(clan, text);
+      if (!m) return fail(p, text ? `${text} isn't in your clan.` : `Who? /is ${action} <name>`);
+      err = action === "promote" ? promote(p, m.id) : action === "demote" ? demote(p, m.id) : transfer(p, m.id);
+      if (!err) {
+        const what = action === "transfer" ? "is now the clan owner" : action === "promote" ? "was promoted to Co-owner" : "was demoted to Member";
+        ok(p, `${m.name} ${what}.`);
+        tellClan(clan, `§b[${clan.name}] §f${m.name} §7${what}.`, p.id);
+      }
+      break;
+    }
+    case "deposit":
+    case "withdraw": {
+      const n = amountOf(text);
+      if (!(n > 0)) return fail(p, `How much? /is ${action} <amount>`);
+      err = action === "deposit" ? deposit(p, n, takeMoney) : withdraw(p, n, addMoney);
+      if (!err) {
+        ok(p, `${action === "deposit" ? "Deposited" : "Withdrew"} ${fmt(n)}. Clan bank: ${fmt(clanOf(p).bank)}.`);
+        tellClan(clan, `§b[${clan.name}] §f${p.name} §7${action === "deposit" ? "deposited" : "withdrew"} §a${fmt(n)}§7.`, p.id);
+      }
+      break;
+    }
+    case "info": {
+      const lines = membersOf(clan).map((m) => `§7- §f${m.name} §8(${RANKS[m.rank]})`);
+      p.sendMessage(
+        [
+          `§b§l${clan.name}`,
+          `§7Island: §f${clan.island.cx}, ${clan.island.cz} §8(${clan.island.size}x${clan.island.size})`,
+          `§7Bank: §e${fmt(clan.bank)}   §7Online: §f${onlineMembers(clan).length}/${membersOf(clan).length}`,
+          ...lines,
+        ].join("\n")
+      );
+      return;
+    }
+  }
+  if (err) fail(p, err);
 }

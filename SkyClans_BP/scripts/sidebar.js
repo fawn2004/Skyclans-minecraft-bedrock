@@ -2,6 +2,7 @@ import { system, world } from "@minecraft/server";
 import { fmt, getBalance } from "./money.js";
 import { sidebarEnabled } from "./serverSettings.js";
 import { ownedSpawnerCount, totalHeads } from "./spawners.js";
+import { clanOf } from "./clans.js";
 
 // ============================================================================
 //  SIDEBAR - the panel on the right of the screen, different for each player.
@@ -16,11 +17,13 @@ const group = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 function lines(player, online) {
   const bar = "§8- - - - - - - - - - - -";
+  const clan = clanOf(player);
   return [
     "§b§lSKY§fCLANS",
     bar,
     `§f${player.name}`,
-    "§7Clan: §8None yet",
+    clan ? `§7Clan: §b${clan.name}` : "§7Clan: §8None yet",
+    clan ? `§7Clan bank: §e${fmt(clan.bank)}` : "",
     "",
     `§7Balance: §a${fmt(getBalance(player))}`,
     `§7Spawners: §b${group(ownedSpawnerCount(player.id))}`,
@@ -28,7 +31,9 @@ function lines(player, online) {
     "",
     `§7Online: §f${online}`,
     bar,
-  ].join("\n");
+  ]
+    .filter((l, i, a) => l !== "" || a[i - 1] !== "")
+    .join("\n");
 }
 
 function refresh() {

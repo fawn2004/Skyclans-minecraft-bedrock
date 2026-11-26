@@ -5,9 +5,11 @@ Clans add-on for Minecraft Bedrock skyblock. Built one menu at a time: each menu
 ## Install
 Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on both packs (behaviour + resources) in the world. Beta APIs are **not** needed.
 
-## What works so far (v0.12.0)
+## What works so far (v0.13.0)
 - **SkyClans Menu** item, given once to each new player (with the starting money), or `/give @s skyclans:menu`.
-- **Main menu:** real wallet in the stat chip; Spawn button teleports to the spawn point (0 0 0 until set in /admin). Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home says "coming soon".
+- **Main menu:** real wallet in the stat chip; Spawn button teleports to the spawn point (0 0 0 until set in /admin). Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home teleports to your island (or opens Create clan).
+- **Clans & islands:** up to 5 players (Owner / Co-owner / Member). `/is create <name>` builds a starter island (dirt, tree, starter chest) on a 100x100 plot. Plot centres go diagonally from 10000/10000 every 500 blocks (10500/10500, 11000/11000 ...). A barrier wall surrounds each plot from Y -64 to 320. Only your clan can build, break or open things on your plot; nobody but admins can build within 64 blocks of spawn. Explosions only break blocks in their own plot. Clan bank (deposit: everyone, withdraw: owner/co). Members screen shows real members with Kick / Leave / Disband and Promote / Demote. Clans are in `SkyClans_BP/scripts/clans.js`, islands and protection in `islands.js`.
+- **`/is`** `create <name>` `home` `sethome` `invite <player>` `join <clan>` `leave` `kick <name>` `promote <name>` `demote <name>` `transfer <name>` `info` `members` `bank` `deposit <amount>` `withdraw <amount>` `disband`.
 - **Money:** every player has a wallet. Money shows short everywhere ($5K, $100K, $1.5M). `/bal` shows it (short and exact), `/pay <player> <amount>` sends money.
 - **Sky Shop:** Spawners, Kits, Ores, Farming, Blocks (-> Blocks / Wood / Lights / Coloured Blocks), Redstone, Food, Search, Sell. Items buy as x1 / x16 / x64 (spawners x1 / x4 / x16). Sell: hand, all, or see prices (half the buy price unless an item sets `sell`). Items need an `id` to be bought or sold. The list is at the top of `SkyClans_BP/scripts/menus/shopMenu.js`.
 - **Kits:** tiers 1-15 (1-5 iron, 6-10 diamond, 11-15 netherite), bought with money. Tiers are in `SkyClans_BP/scripts/kits.js`.
@@ -18,7 +20,7 @@ Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on 
 - **Commands (everyone):** `/spawn` `/menu` `/shop` `/sell hand|all` `/bal` `/baltop` `/pay <player> <amount>` `/kits` `/crates` `/settings` `/coords`.
 - **Admins = players with the `admin` tag** (`/tag <name> add admin`). Admin commands: `/admin` `/eco give|take|set <player> <amount>` `/givekey <player> <common|rare|legendary> [amount]` `/setspawn` `/broadcast <message>`. All commands are in `SkyClans_BP/scripts/commands.js`.
 - **`/admin`** menu: Money (give / take / set), Give Spawner, Give Kit, Give Keys, Set Spawn Here, Starting Money, Sidebar on/off, Menu Item.
-- Members, Insurance and Raid Dispatch screens show placeholder data until clans exist.
+- Insurance and Raid Dispatch still show placeholder data; plot upgrades (to 300x300) and the Island Core come next.
 
 ## Layout
 - `SkyClans_BP/scripts/main.js` – item use (menu item, crate keys), first-join item and money

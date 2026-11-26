@@ -2,6 +2,7 @@ import { ActionFormData } from "@minecraft/server-ui";
 import { ItemStack, system, world } from "@minecraft/server";
 import { SPAWNERS, SPAWNER_SETTINGS as S } from "./spawnerConfig.js";
 import { NAV, SCREEN, fail, show, success } from "./forms.js";
+import { canBuild } from "./islands.js";
 
 // ============================================================================
 //  SPAWNERS
@@ -189,6 +190,7 @@ function placeSpawner(player, block, face, info) {
   if (target.x === px && target.z === pz && (target.y === py || target.y === py + 1)) return;
 
   const loc = target.location;
+  if (!canBuild(player, player.dimension.id, loc)) return fail(player, "You can only place spawners on your own island.");
   try {
     world.structureManager.place(STRUCTURE(info.mob), player.dimension, loc);
   } catch {

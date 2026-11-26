@@ -613,3 +613,28 @@ d.rectangle([5, 5, 10, 6], fill=(170, 120, 30, 255))
 d.rectangle([5, 9, 10, 10], fill=(170, 120, 30, 255))
 coin.save(UI / "coin.png")
 print("v0.11 textures written")
+
+
+# ---------------------------------------------------------------- v0.13 members tree (owner + 2x2 slots)
+GREEN = (52, 206, 140)
+PURPLE = (160, 124, 240)
+t = card(224, 188, EDGE, (13, 17, 25, 255))
+d = ImageDraw.Draw(t)
+def hl(x1, x2, y): d.rectangle([x1 * S, y * S, x2 * S + S - 1, y * S + S - 1], fill=LINE)
+def vl(x, y1, y2): d.rectangle([x * S, y1 * S, x * S + S - 1, y2 * S + S - 1], fill=LINE)
+vl(112, 42, 60)       # owner down
+hl(58, 166, 60)       # bar
+vl(58, 60, 78)        # to the two slots in row 1
+vl(166, 60, 78)
+vl(58, 108, 128)      # row 1 -> row 2
+vl(166, 108, 128)
+t.save(UI / "members_tree.png")
+
+for name, col in (("member_co", GREEN), ("member_member", PURPLE)):
+    c = card(84, 30, col)
+    face(c, 5 * S, 5 * S, int(2.5 * S))
+    c.save(UI / f"{name}.png")
+
+for name, col in (("btn_blue", (24, 70, 96)), ("btn_blue_hover", (34, 100, 136))):
+    card(60, 14, tuple(min(255, v + 40) for v in col), col + (255,)).save(UI / f"{name}.png")
+print("v0.13 textures written")

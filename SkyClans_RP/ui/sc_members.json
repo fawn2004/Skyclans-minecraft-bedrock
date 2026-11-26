@@ -1,10 +1,12 @@
 // SkyClans "Chain of Command" (members) screen. Title marker "§s§c§3".
 //   title (after marker) -> small grey line, e.g. clan name
 //   body                 -> info next to the face in the SELECTED panel
-//   button 0 -> owner card     button 1 -> invite card
-//   button 2 -> red button in the SELECTED panel (Disband clan)
-//   button 3 -> BACK
-// Everything is placed by position + button number: no grids, no text checks.
+//   button 0   -> owner card
+//   buttons 1-4 -> the other members / Invite card, 2 x 2 under the owner
+//   button 5   -> red button in the SELECTED panel (Kick / Leave / Disband)
+//   button 6   -> blue button in the SELECTED panel (Promote / Demote)
+//   button 7   -> BACK
+// Cards and the red / blue buttons hide when their text is empty.
 {
   "namespace": "sc_members",
 
@@ -53,8 +55,7 @@
           "size": [ 224, 188 ],
           "controls": [
             { "l_owner@sc_members.row_label": { "offset": [ 8, 24 ], "text": "OWNER" } },
-            { "l_co@sc_members.row_label": { "offset": [ 8, 80 ], "text": "CO-OWNER" } },
-            { "l_members@sc_members.row_label": { "offset": [ 8, 130 ], "text": "MEMBERS" } }
+            { "l_members@sc_members.row_label": { "offset": [ 8, 66 ], "text": "MEMBERS" } }
           ]
         }
       },
@@ -132,9 +133,13 @@
           "layer": 5,
           "controls": [
             { "owner@sc_members.person_card": { "collection_index": 0, "offset": [ 78, 52 ] } },
-            { "invite@sc_members.person_card": { "collection_index": 1, "offset": [ 78, 160 ] } },
-            { "disband@sc_members.red_button": { "collection_index": 2, "offset": [ 244, 64 ] } },
-            { "back@skyclans.back_button": { "collection_index": 3 } }
+            { "slot1@sc_members.person_card": { "collection_index": 1, "offset": [ 24, 118 ] } },
+            { "slot2@sc_members.person_card": { "collection_index": 2, "offset": [ 132, 118 ] } },
+            { "slot3@sc_members.person_card": { "collection_index": 3, "offset": [ 24, 168 ] } },
+            { "slot4@sc_members.person_card": { "collection_index": 4, "offset": [ 132, 168 ] } },
+            { "red@sc_members.red_button": { "collection_index": 5, "offset": [ 244, 61 ] } },
+            { "blue@sc_members.blue_button": { "collection_index": 6, "offset": [ 244, 78 ] } },
+            { "back@skyclans.back_button": { "collection_index": 7 } }
           ]
         }
       },
@@ -194,7 +199,11 @@
       { "from_button_id": "button.menu_select", "to_button_id": "button.form_button_click", "mapping_type": "pressed" },
       { "from_button_id": "button.menu_ok", "to_button_id": "button.form_button_click", "mapping_type": "focused" }
     ],
-    "bindings": [ { "binding_type": "collection_details", "binding_collection_name": "form_buttons" } ],
+    "bindings": [
+      { "binding_type": "collection_details", "binding_collection_name": "form_buttons" },
+      { "binding_name": "#form_button_text", "binding_type": "collection", "binding_collection_name": "form_buttons" },
+      { "binding_type": "view", "source_property_name": "(not (#form_button_text = ''))", "target_property_name": "#visible" }
+    ],
     "controls": [
       { "default": { "type": "panel" } },
       { "hover": { "type": "image", "texture": "textures/ui/skyclans/tile_hover", "layer": 3 } },
@@ -240,11 +249,53 @@
       { "from_button_id": "button.menu_select", "to_button_id": "button.form_button_click", "mapping_type": "pressed" },
       { "from_button_id": "button.menu_ok", "to_button_id": "button.form_button_click", "mapping_type": "focused" }
     ],
-    "bindings": [ { "binding_type": "collection_details", "binding_collection_name": "form_buttons" } ],
+    "bindings": [
+      { "binding_type": "collection_details", "binding_collection_name": "form_buttons" },
+      { "binding_name": "#form_button_text", "binding_type": "collection", "binding_collection_name": "form_buttons" },
+      { "binding_type": "view", "source_property_name": "(not (#form_button_text = ''))", "target_property_name": "#visible" }
+    ],
     "controls": [
       { "default": { "type": "image", "texture": "textures/ui/skyclans/btn_red" } },
       { "hover": { "type": "image", "texture": "textures/ui/skyclans/btn_red_hover" } },
       { "pressed": { "type": "image", "texture": "textures/ui/skyclans/btn_red_hover" } },
+      {
+        "text": {
+          "type": "label",
+          "layer": 2,
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "size": [ "default", "default" ],
+          "font_scale_factor": 0.6,
+          "text": "#form_button_text",
+          "bindings": [ { "binding_name": "#form_button_text", "binding_type": "collection", "binding_collection_name": "form_buttons" } ]
+        }
+      }
+    ]
+  },
+
+  "blue_button": {
+    "type": "button",
+    "size": [ 60, 14 ],
+    "anchor_from": "top_left",
+    "anchor_to": "top_left",
+    "default_control": "default",
+    "hover_control": "hover",
+    "pressed_control": "pressed",
+    "sound_name": "random.click",
+    "focus_enabled": true,
+    "button_mappings": [
+      { "from_button_id": "button.menu_select", "to_button_id": "button.form_button_click", "mapping_type": "pressed" },
+      { "from_button_id": "button.menu_ok", "to_button_id": "button.form_button_click", "mapping_type": "focused" }
+    ],
+    "bindings": [
+      { "binding_type": "collection_details", "binding_collection_name": "form_buttons" },
+      { "binding_name": "#form_button_text", "binding_type": "collection", "binding_collection_name": "form_buttons" },
+      { "binding_type": "view", "source_property_name": "(not (#form_button_text = ''))", "target_property_name": "#visible" }
+    ],
+    "controls": [
+      { "default": { "type": "image", "texture": "textures/ui/skyclans/btn_blue" } },
+      { "hover": { "type": "image", "texture": "textures/ui/skyclans/btn_blue_hover" } },
+      { "pressed": { "type": "image", "texture": "textures/ui/skyclans/btn_blue_hover" } },
       {
         "text": {
           "type": "label",
