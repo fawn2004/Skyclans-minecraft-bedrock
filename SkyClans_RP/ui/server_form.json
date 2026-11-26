@@ -4,7 +4,7 @@
 //   "§s§c§3"  -> SkyClans members menu   (sc_members.screen)
 //   "§s§c§4"  -> SkyClans insurance menu (sc_insurance.screen)
 //   "§s§c§5"  -> SkyClans raid dispatch  (sc_raid.screen)
-//   "§s§c§6"  -> SkyClans sky shop       (sc_shop.screen)
+//   "§s§c§6"  -> SkyClans tile list      (sc_list.screen) - used by the Sky Shop
 //   anything without "§s§c" -> the normal vanilla form, so other add-ons are unaffected
 {
   "namespace": "server_form",
@@ -101,7 +101,7 @@
         }
       },
       {
-        "skyclans_shop@sc_shop.screen": {
+        "skyclans_list@sc_list.screen": {
           "bindings": [
             { "binding_name": "#title_text" },
             {

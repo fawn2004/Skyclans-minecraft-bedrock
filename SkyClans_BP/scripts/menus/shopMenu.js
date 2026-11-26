@@ -2,76 +2,73 @@ import { ActionFormData } from "@minecraft/server-ui";
 import { SCREEN, comingSoon, show } from "../forms.js";
 import { openMainMenu } from "./mainMenu.js";
 
-// Categories down the left (max 9). Icons are vanilla textures.
+// Sky Shop: a grid of category tiles -> a grid of item tiles.
+// Uses the simple list layout (resource pack ui/sc_list.json): up to 12 tiles per page.
+const NAV = "textures/ui/skyclans/nav_";
+const PER_PAGE = 9; // 9 items + Back / Prev / Next = 12 tiles
+
+// Icons are vanilla textures. "items" are placeholders until the shop is filled in.
 const CATEGORIES = [
   { name: "Raid Gear", icon: "textures/items/diamond_sword" },
   { name: "Spawners", icon: "textures/blocks/mob_spawner" },
   { name: "Ores", icon: "textures/blocks/diamond_ore" },
   { name: "Farming", icon: "textures/items/wheat" },
-  { name: "Blocks", icon: "textures/blocks/grass_side_carried", desc: "Blocks for building your island and bridging" },
+  {
+    name: "Blocks",
+    icon: "textures/blocks/grass_side_carried",
+    items: [
+      { name: "Cobblestone", price: 2, icon: "textures/blocks/cobblestone" },
+      { name: "Dirt", price: 5, icon: "textures/blocks/dirt" },
+      { name: "Oak Planks", price: 1, icon: "textures/blocks/planks_oak" },
+      { name: "Sandstone", price: 20, icon: "textures/blocks/sandstone_top" },
+      { name: "Netherrack", price: 1, icon: "textures/blocks/netherrack" },
+      { name: "Scaffolding", price: 4, icon: "textures/blocks/scaffolding_top" },
+      { name: "White Wool", price: 5, icon: "textures/blocks/wool_colored_white" },
+      { name: "Stone", price: 2, icon: "textures/blocks/stone" },
+    ],
+  },
   { name: "Food", icon: "textures/items/apple" },
-  { name: "Chunk Hopper", icon: "textures/blocks/hopper_top" },
   { name: "Search", icon: "textures/items/spyglass" },
   { name: "Sell", icon: "textures/items/emerald" },
 ];
-const START_CATEGORY = 4; // Blocks - matches the placeholder items below
 
-// Items shown on the page (max 8). Placeholder list = Blocks.
-const ITEMS = [
-  { name: "Cobblestone", price: 2, icon: "textures/blocks/cobblestone" },
-  { name: "Dirt", price: 5, icon: "textures/blocks/dirt" },
-  { name: "Oak Planks", price: 1, icon: "textures/blocks/planks_oak" },
-  { name: "Sandstone", price: 20, icon: "textures/blocks/sandstone_top" },
-  { name: "Netherrack", price: 1, icon: "textures/blocks/netherrack" },
-  { name: "Scaffolding", price: 4, icon: "textures/blocks/scaffolding_top" },
-  { name: "White Wool", price: 5, icon: "textures/blocks/wool_colored_white" },
-  { name: "Stone", price: 2, icon: "textures/blocks/stone" },
-];
-const AMOUNTS = [1, 16, 64];
+const balanceLine = () => "Balance §e$0"; // placeholder until money exists
 
-// Button numbers - must match tools/make_layouts.py (Sky Shop).
-const CATS = 9;
-const ITEM0 = CATS; // 9-16
-const QTY0 = ITEM0 + 8; // 17-40
-const PREV = QTY0 + 24; // 41
-const NEXT = PREV + 1; // 42
-const BACK = NEXT + 4; // 46 (43 page, 44 header, 45 balance)
-
-export async function openShopMenu(player, selected = START_CATEGORY) {
-  const cat = CATEGORIES[selected];
-  const form = new ActionFormData().title(SCREEN.shop).body("");
-
-  // categories (selected one in gold)
-  for (let i = 0; i < CATS; i++) {
-    const c = CATEGORIES[i];
-    if (c) form.button(i === selected ? `§e§l${c.name}` : c.name, c.icon);
-    else form.button("");
-  }
-  // item cards
-  for (let n = 0; n < 8; n++) {
-    const it = ITEMS[n];
-    if (it) form.button(`§f${it.name}\n§a$${it.price} §feach`, it.icon);
-    else form.button("");
-  }
-  // quantity buttons: their look and text are fixed in the layout
-  for (let i = 0; i < 24; i++) form.button("");
-  form.button("§7« Prev").button("Next »").button("§f1 / 1"); // prev, next, page
-  form.button(`§f${cat.name}\n§7${cat.desc ?? "Coming soon"}`, cat.icon); // header
-  form.button("§fBalance §e$0"); // balance
-  form.button("Back");
+export async function openShopMenu(player) {
+  const form = new ActionFormData().title(SCREEN.list + "§l§fSKY SHOP").body(balanceLine());
+  for (const c of CATEGORIES) form.button(`${c.name}\n§7${c.items ? `${c.items.length} items` : "Coming soon"}`, c.icon);
+  form.button("§7Back", NAV + "back");
 
   const res = await show(player, form);
   if (!res || res.canceled || res.selection === undefined) return;
-  const s = res.selection;
+  if (res.selection === CATEGORIES.length) return openMainMenu(player);
 
-  if (s === BACK) return openMainMenu(player);
-  if (s < CATS) {
-    if (CATEGORIES[s] && s !== selected) comingSoon(player, CATEGORIES[s].name);
-  } else if (s >= QTY0 && s < PREV) {
-    const it = ITEMS[Math.floor((s - QTY0) / 3)];
-    if (it) comingSoon(player, `Buying ${AMOUNTS[(s - QTY0) % 3]}x ${it.name}`);
-  } else if (s === PREV || s === NEXT) {
-    player.sendMessage("§b[SkyClans] §7There's only one page for now.");
+  const cat = CATEGORIES[res.selection];
+  if (!cat.items) {
+    comingSoon(player, cat.name);
+    return openShopMenu(player);
   }
-  return openShopMenu(player, selected);
+  return openCategory(player, cat, 0);
+}
+
+async function openCategory(player, cat, page) {
+  const pages = Math.max(1, Math.ceil(cat.items.length / PER_PAGE));
+  const items = cat.items.slice(page * PER_PAGE, page * PER_PAGE + PER_PAGE);
+  const pageInfo = pages > 1 ? `   §7Page §f${page + 1}/${pages}` : "";
+
+  const form = new ActionFormData().title(SCREEN.list + "§l§f" + cat.name.toUpperCase()).body(balanceLine() + pageInfo);
+  for (const it of items) form.button(`${it.name}\n§a$${it.price} §feach`, it.icon);
+
+  // nav tiles after the items
+  const nav = [{ text: "§7Back", icon: NAV + "back", go: () => openShopMenu(player) }];
+  if (page > 0) nav.push({ text: "§ePrev", icon: NAV + "prev", go: () => openCategory(player, cat, page - 1) });
+  if (page < pages - 1) nav.push({ text: "§eNext", icon: NAV + "next", go: () => openCategory(player, cat, page + 1) });
+  for (const n of nav) form.button(n.text, n.icon);
+
+  const res = await show(player, form);
+  if (!res || res.canceled || res.selection === undefined) return;
+  if (res.selection >= items.length) return nav[res.selection - items.length].go();
+
+  comingSoon(player, `Buying ${items[res.selection].name}`);
+  return openCategory(player, cat, page);
 }

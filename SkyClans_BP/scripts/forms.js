@@ -9,7 +9,7 @@ export const SCREEN = {
   members: "§s§c§3",
   insurance: "§s§c§4",
   raid: "§s§c§5",
-  shop: "§s§c§6",
+  list: "§s§c§6", // simple tile grid (Sky Shop)
 };
 
 /**

@@ -550,3 +550,14 @@ for name, icon, col in (("wins", SPRITES["raids"], RED), ("losses", SKULL, RED),
 card(16, 11, (110, 130, 170), (52, 66, 96, 255)).save(UI / "shop_qty_hover.png")
 card(16, 11, (255, 230, 150), (255, 212, 110, 255)).save(UI / "shop_qty_gold_hover.png")
 print("v0.5 textures written")
+
+
+# ---------------------------------------------------------------- v0.6 list tiles (shop)
+# Plain tile behind a vanilla item icon + nav arrows.
+card(80, 56, NAVY_EDGE, NAVY).save(UI / "list_tile.png")
+ARROW_R = [row[::-1] for row in ARROW]
+for name, rows, col in (("nav_back", ARROW, (190, 196, 206)), ("nav_prev", ARROW, GOLD), ("nav_next", ARROW_R, GOLD)):
+    img = Image.new("RGBA", (10 * 4, 7 * 4 + 12), (0, 0, 0, 0))
+    draw_sprite(img, rows, col, 0, 6, 4)
+    img.save(UI / f"{name}.png")
+print("v0.6 textures written")
