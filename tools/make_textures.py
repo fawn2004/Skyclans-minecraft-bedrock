@@ -182,3 +182,123 @@ draw_sprite(icon, SPRITES["home"], TILES["home"], 16, 16, 8)
 icon.save(ROOT / "SkyClans_RP" / "pack_icon.png")
 icon.save(ROOT / "SkyClans_BP" / "pack_icon.png")
 print("textures written")
+
+
+# ---------------------------------------------------------------- Settings
+SET_SPRITES = {
+    "chunks": [
+        "############",
+        "#....##....#",
+        "#.##.##.##.#",
+        "#.##.##.##.#",
+        "#....##....#",
+        "############",
+        "############",
+        "#....##....#",
+        "#.##.##.##.#",
+        "#.##.##.##.#",
+        "#....##....#",
+        "############",
+    ],
+    "bright": [
+        ".....##.....",
+        ".#...##...#.",
+        "..#......#..",
+        "....####....",
+        "...######...",
+        "##.######.##",
+        "##.######.##",
+        "...######...",
+        "....####....",
+        "..#......#..",
+        ".#...##...#.",
+        ".....##.....",
+    ],
+    "alert": [
+        ".....##.....",
+        "....####....",
+        "...######...",
+        "...######...",
+        "..########..",
+        "..########..",
+        "..########..",
+        ".##########.",
+        "############",
+        "............",
+        ".....##.....",
+        "............",
+    ],
+    "coords": [
+        "....####....",
+        "..##....##..",
+        ".#.......##.",
+        ".#......#.#.",
+        "#......#...#",
+        "#.....#....#",
+        "#....#.....#",
+        "#...#......#",
+        ".#.#......#.",
+        ".##.......#.",
+        "..##....##..",
+        "....####....",
+    ],
+}
+
+# setting -> card border / icon colour
+CARDS = {
+    "chunks": (88, 136, 232),
+    "bright": (52, 206, 140),
+    "alert": (236, 84, 76),
+    "coords": (52, 206, 140),
+}
+
+CW, CH = 166 * S, 84 * S
+
+
+def lever(img, on):
+    """Lever on the right of a card: grey base + stick (tilted right when ON)."""
+    d = ImageDraw.Draw(img)
+    bx, by = CW - 36 * S, CH // 2 + 4 * S
+    d.rectangle([bx, by, bx + 28 * S - 1, by + 5 * S - 1], fill=(150, 154, 160, 255))
+    d.rectangle([bx, by + 5 * S, bx + 28 * S - 1, by + 7 * S - 1], fill=(96, 100, 108, 255))
+    stick = (140, 100, 60, 255)
+    tip = (230, 50, 40, 255) if on else (110, 40, 36, 255)
+    for i in range(10):
+        # each step is 2x2 GUI units, walking up-right (ON) or up-left (OFF)
+        x = bx + 14 * S + (i if on else -i) * S
+        y = by - (i + 1) * S * 2 // 2 - i * S
+        c = tip if i >= 8 else stick
+        d.rectangle([x, y, x + 2 * S - 1, y + 2 * S - 1], fill=c)
+
+
+for name, colour in CARDS.items():
+    for state in ("off", "on"):
+        img = Image.new("RGBA", (CW, CH), BG)
+        d = ImageDraw.Draw(img)
+        d.rectangle([0, 0, CW - 1, CH - 1], outline=colour + (255,), width=S)
+        # icon box on the left
+        ix, iy = 10 * S, CH // 2 - 11 * S
+        d.rectangle([ix, iy, ix + 22 * S - 1, iy + 22 * S - 1], fill=(10, 13, 19, 255), outline=EDGE, width=S)
+        draw_sprite(img, SET_SPRITES[name], colour, ix + 5 * S, iy + 5 * S, S)
+        lever(img, state == "on")
+        img.save(UI / f"card_{name}_{state}.png")
+
+# Header gear + back button
+gear = Image.new("RGBA", (12 * S, 12 * S), (0, 0, 0, 0))
+draw_sprite(gear, SPRITES["settings"], (150, 160, 176), 0, 0, S)
+gear.save(UI / "head_settings.png")
+
+ARROW = [
+    "....#.....",
+    "...##.....",
+    "..#######.",
+    ".########.",
+    "..#######.",
+    "...##.....",
+    "....#.....",
+]
+for name, col in (("back", (190, 196, 206)), ("back_hover", (255, 255, 255))):
+    img = border_box(14, 14, (24, 30, 42, 255), (56, 66, 84, 255))
+    draw_sprite(img, ARROW, col, 2, 3, 1)
+    img.save(UI / f"{name}.png")
+print("settings textures written")

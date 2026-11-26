@@ -1,8 +1,12 @@
 import { system } from "@minecraft/server";
 import { FormCancelationReason } from "@minecraft/server-ui";
 
-// A form title starting with this uses the SkyClans layout (resource pack ui/server_form.json).
-export const MENU_MARKER = "§s§c";
+// Start a form title with one of these to pick its SkyClans layout
+// (resource pack ui/server_form.json). Must match the markers there.
+export const SCREEN = {
+  main: "§s§c§1",
+  settings: "§s§c§2",
+};
 
 /**
  * Shows a form, waiting a moment if the player is busy (e.g. chat still open

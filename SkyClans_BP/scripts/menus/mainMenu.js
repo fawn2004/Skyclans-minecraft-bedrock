@@ -1,6 +1,7 @@
 import { world } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
-import { MENU_MARKER, comingSoon, show } from "../forms.js";
+import { SCREEN, comingSoon, show } from "../forms.js";
+import { openSettingsMenu } from "./settingsMenu.js";
 
 const TILE = "textures/ui/skyclans/tile_";
 
@@ -12,7 +13,7 @@ const TILES = [
   { name: "Sky Shop", sub: "Buy & sell", art: "shop", open: (p) => comingSoon(p, "Sky Shop") },
   { name: "Insurance", sub: "No cover yet", art: "insurance", open: (p) => comingSoon(p, "Insurance") },
   { name: "Members", sub: "Your clan", art: "members", open: (p) => comingSoon(p, "Members") },
-  { name: "Settings", sub: "Your options", art: "settings", open: (p) => comingSoon(p, "Settings") },
+  { name: "Settings", sub: "Your options", art: "settings", open: (p) => openSettingsMenu(p) },
 ];
 
 export async function openMainMenu(player) {
@@ -21,10 +22,10 @@ export async function openMainMenu(player) {
   const clanLine = `NO CLAN  ·  ${online} ONLINE`;
   const stats = "Bank §e$0 §7 Wallet §a$0 §7 Shield §cOFF";
 
-  const form = new ActionFormData().title(MENU_MARKER + clanLine).body(stats);
+  const form = new ActionFormData().title(SCREEN.main + clanLine).body(stats);
   for (const t of TILES) form.button(`${t.name}\n§7${t.sub}`, TILE + t.art);
 
   const res = await show(player, form);
   if (!res || res.canceled || res.selection === undefined) return;
-  TILES[res.selection]?.open(player);
+  await TILES[res.selection]?.open(player);
 }
