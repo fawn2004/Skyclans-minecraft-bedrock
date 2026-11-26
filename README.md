@@ -5,14 +5,14 @@ Clans add-on for Minecraft Bedrock skyblock. Built one menu at a time: each menu
 ## Install
 Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on both packs (behaviour + resources) in the world. Beta APIs are **not** needed.
 
-## What works so far (v0.7.2)
+## What works so far (v0.7.3)
 - **SkyClans Menu** item, given once to each new player, or `/give @s skyclans:menu`. Use it to open the main menu.
 - **Main menu:** Island Home, Raids, Sky Shop, Insurance, Members and Settings. Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home says "coming soon".
 - **Settings screen:** 4 cards (Chunk Borders, Full Bright, Raid Alert Sound, Coordinates), all "coming soon" for now, plus a back arrow next to the X.
 - **Members (Chain of Command):** you shown as owner, an invite slot, the SELECTED panel with Disband Clan, and the who-can-do-what table. Invite and Disband are "coming soon".
 - **Insurance Vault:** Basic / Silver / Gold / Diamond tiers (Basic next, the rest locked), Last claim and Covers strips. Buying is "coming soon".
 - **Raid Dispatch:** Normal / Intel / Cheap raid cards, Wins / Losses / Streak chips and the Your Squad panel. Buying and scouting are "coming soon".
-- **Sky Shop:** simple tile grid of pages. Raid Gear, Spawners, Ores, Farming, Blocks (-> Blocks / Wood / Lights / Coloured Blocks), Food, Search, Sell. Every category opens its page (empty ones say "Nothing here yet"); Search finds items by name. Only Blocks > Blocks has placeholder items; buying and selling are "coming soon". The shop list is at the top of `SkyClans_BP/scripts/menus/shopMenu.js`.
+- **Sky Shop:** simple tile grid of pages. Raid Gear, Spawners, Ores, Farming, Blocks (-> Blocks / Wood / Lights / Coloured Blocks / Redstone), Food, Search, Sell. Every category opens its page (empty ones say "Nothing here yet"); Search finds items by name. Only Blocks > Blocks has placeholder items; buying and selling are "coming soon". The shop list is at the top of `SkyClans_BP/scripts/menus/shopMenu.js`.
 - **`/admin`** (operators only) opens a placeholder admin menu.
 
 ## Layout

@@ -44,6 +44,7 @@ const SHOP = {
         { name: "Wood", icon: "textures/blocks/log_oak", children: [] },
         { name: "Lights", icon: "textures/blocks/glowstone", children: [] },
         { name: "Coloured Blocks", icon: "textures/blocks/wool_colored_red", children: [] },
+        { name: "Redstone", icon: "textures/items/redstone_dust", children: [] },
       ],
     },
     { name: "Food", icon: "textures/items/apple", children: [] },
