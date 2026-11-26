@@ -1,0 +1,226 @@
+// SkyClans main menu layout.
+// Used for any ActionForm whose title starts with "§s§c" (see server_form.json).
+//   title (after the marker) -> small grey line at the top, e.g. "NO CLAN · 1 ONLINE"
+//   body                     -> the stat chip on the right, e.g. "Bank $0  Wallet $0"
+//   buttons                  -> tiles, 3 per row; the button image is the whole tile art
+// Each tile is ONE button: the art + text are drawn once, and the hover/pressed
+// states only add a thin see-through outline on top.
+{
+  "namespace": "skyclans",
+
+  "main_screen": {
+    "type": "image",
+    "texture": "textures/ui/skyclans/window",
+    "size": [ 352, 236 ],
+    "controls": [
+      { "header@skyclans.header": {} },
+      { "tiles@skyclans.tile_grid": {} },
+      { "footer@skyclans.footer": {} }
+    ]
+  },
+
+  "header": {
+    "type": "panel",
+    "size": [ "100% - 16px", 40 ],
+    "anchor_from": "top_left",
+    "anchor_to": "top_left",
+    "offset": [ 8, 6 ],
+    "controls": [
+      {
+        "clan_line": {
+          "type": "label",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "size": [ "100% - 110px", 10 ],
+          "color": [ 0.62, 0.66, 0.72 ],
+          "font_scale_factor": 0.8,
+          "text": "#text",
+          "bindings": [
+            { "binding_name": "#title_text" },
+            {
+              "binding_type": "view",
+              "source_property_name": "(#title_text - '§s§c')",
+              "target_property_name": "#text"
+            }
+          ]
+        }
+      },
+      {
+        "logo": {
+          "type": "label",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [ 0, 14 ],
+          "size": [ "default", "default" ],
+          "font_scale_factor": 1.6,
+          "shadow": true,
+          "text": "§l§fCLOUD§bBREAK"
+        }
+      },
+      {
+        "stats": {
+          "type": "image",
+          "texture": "textures/ui/skyclans/chip",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [ -18, 0 ],
+          "size": [ "100%c + 8px", 14 ],
+          "controls": [
+            {
+              "stats_text": {
+                "type": "label",
+                "size": [ "default", "default" ],
+                "anchor_from": "center",
+                "anchor_to": "center",
+                "font_scale_factor": 0.8,
+                "color": [ 0.82, 0.85, 0.9 ],
+                "text": "#form_text",
+                "bindings": [ { "binding_name": "#form_text" } ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "close@skyclans.close_button": {
+          "anchor_from": "top_right",
+          "anchor_to": "top_right"
+        }
+      }
+    ]
+  },
+
+  "close_button": {
+    "type": "button",
+    "size": [ 14, 14 ],
+    "default_control": "default",
+    "hover_control": "hover",
+    "pressed_control": "pressed",
+    "sound_name": "random.click",
+    "focus_enabled": true,
+    "button_mappings": [
+      { "from_button_id": "button.menu_select", "to_button_id": "button.menu_exit", "mapping_type": "pressed" },
+      { "from_button_id": "button.menu_ok", "to_button_id": "button.menu_exit", "mapping_type": "focused" }
+    ],
+    "controls": [
+      { "default": { "type": "image", "texture": "textures/ui/skyclans/close" } },
+      { "hover": { "type": "image", "texture": "textures/ui/skyclans/close_hover" } },
+      { "pressed": { "type": "image", "texture": "textures/ui/skyclans/close_hover" } }
+    ]
+  },
+
+  "tile_grid": {
+    "type": "grid",
+    "anchor_from": "top_middle",
+    "anchor_to": "top_middle",
+    "offset": [ 0, 50 ],
+    "size": [ 336, 156 ],
+    "grid_dimensions": [ 3, 2 ],
+    "grid_item_template": "skyclans.tile",
+    "collection_name": "form_buttons",
+    "bindings": [
+      { "binding_name": "#form_button_length", "binding_name_override": "#maximum_grid_items" }
+    ]
+  },
+
+  "tile": {
+    "type": "panel",
+    "size": [ 112, 78 ],
+    "controls": [ { "button@skyclans.tile_button": {} } ]
+  },
+
+  "tile_button": {
+    "type": "button",
+    "size": [ 108, 74 ],
+    "default_control": "default",
+    "hover_control": "hover",
+    "pressed_control": "pressed",
+    "sound_name": "random.click",
+    "focus_enabled": true,
+    "button_mappings": [
+      { "from_button_id": "button.menu_select", "to_button_id": "button.form_button_click", "mapping_type": "pressed" },
+      { "from_button_id": "button.menu_ok", "to_button_id": "button.form_button_click", "mapping_type": "focused" }
+    ],
+    "bindings": [
+      { "binding_type": "collection_details", "binding_collection_name": "form_buttons" }
+    ],
+    "controls": [
+      // state controls: nothing normally, a light outline on hover / press
+      { "default": { "type": "panel" } },
+      { "hover": { "type": "image", "texture": "textures/ui/skyclans/tile_hover", "layer": 3 } },
+      { "pressed": { "type": "image", "texture": "textures/ui/skyclans/tile_pressed", "layer": 3 } },
+
+      // content: drawn once, always visible
+      {
+        "art": {
+          "type": "image",
+          "layer": 1,
+          "bindings": [
+            {
+              "binding_name": "#form_button_texture",
+              "binding_name_override": "#texture",
+              "binding_type": "collection",
+              "binding_collection_name": "form_buttons"
+            },
+            {
+              "binding_name": "#form_button_texture_file_system",
+              "binding_name_override": "#texture_file_system",
+              "binding_type": "collection",
+              "binding_collection_name": "form_buttons"
+            }
+          ]
+        }
+      },
+      {
+        "name": {
+          "type": "label",
+          "layer": 2,
+          "anchor_from": "bottom_middle",
+          "anchor_to": "bottom_middle",
+          "offset": [ 0, -7 ],
+          "size": [ "100% - 8px", "default" ],
+          "text_alignment": "center",
+          "shadow": true,
+          "text": "#form_button_text",
+          "bindings": [
+            {
+              "binding_name": "#form_button_text",
+              "binding_type": "collection",
+              "binding_collection_name": "form_buttons"
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  "footer": {
+    "type": "panel",
+    "anchor_from": "bottom_middle",
+    "anchor_to": "bottom_middle",
+    "offset": [ 0, -7 ],
+    "size": [ "100% - 16px", 10 ],
+    "controls": [
+      {
+        "hint_left": {
+          "type": "label",
+          "anchor_from": "left_middle",
+          "anchor_to": "left_middle",
+          "font_scale_factor": 0.75,
+          "color": [ 0.55, 0.59, 0.66 ],
+          "text": "Tap a menu to open it"
+        }
+      },
+      {
+        "hint_right": {
+          "type": "label",
+          "anchor_from": "right_middle",
+          "anchor_to": "right_middle",
+          "font_scale_factor": 0.75,
+          "color": [ 0.55, 0.59, 0.66 ],
+          "text": "Island Core: tap your core for upgrades"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "resource_pack_name": "skyclans",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "skyclans_menu": { "textures": "textures/items/skyclans_menu" }
+  }
+}
