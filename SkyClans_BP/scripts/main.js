@@ -4,7 +4,7 @@ import { openAdminMenu } from "./menus/adminMenu.js";
 import { registerSpawners } from "./spawners.js";
 import { registerSidebar } from "./sidebar.js";
 import { registerPlayerSettings } from "./playerSettings.js";
-import { addMoney, fmt, getBalance, takeMoney } from "./money.js";
+import { addMoney, fmt, fmtExact, getBalance, takeMoney } from "./money.js";
 import { getStartingMoney } from "./serverSettings.js";
 
 registerSpawners();
@@ -58,7 +58,7 @@ system.beforeEvents.startup.subscribe(({ customCommandRegistry: reg }) => {
     (origin) => {
       const player = asPlayer(origin);
       if (!player) return failed("Only players have a balance.");
-      return { status: CustomCommandStatus.Success, message: `§7Balance: §a${fmt(getBalance(player))}` };
+      return { status: CustomCommandStatus.Success, message: `§7Balance: §a${fmt(getBalance(player))} §8(${fmtExact(getBalance(player))})` };
     }
   );
 

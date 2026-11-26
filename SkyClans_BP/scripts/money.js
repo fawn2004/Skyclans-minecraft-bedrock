@@ -28,12 +28,17 @@ export function takeMoney(player, amount) {
   return true;
 }
 
-/** $1,234,567 */
+/** Money as shown everywhere: short, e.g. $950, $5K, $12.5K, $100K, $1.5M, $5M, $2.4B */
 export function fmt(n) {
+  return fmtShort(n);
+}
+
+/** Exact amount with commas, e.g. $1,234,567 (used where the exact number matters, like /bal) */
+export function fmtExact(n) {
   return "$" + String(Math.floor(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-/** Short form for small spaces: $950, $12.5K, $2.4M, $1.2B */
+/** $950, $12.5K, $2.4M, $1.2B (rounded down to one decimal, so you never see more than you have) */
 export function fmtShort(n) {
   const units = [
     [1e12, "T"],

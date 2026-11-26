@@ -8,7 +8,7 @@ const BAR = "textures/ui/skyclans/bar_";
 const RAIDS = [
   {
     name: "Normal raid",
-    bar: "§0§lBUY · $30,000",
+    bar: "§0§lBUY · $30K",
     colour: "gold",
     inner: "",
     desc: "Random clan. Could be loaded, could be empty. No info.",
@@ -22,7 +22,7 @@ const RAIDS = [
   },
   {
     name: "Cheap raid",
-    bar: "§0§lBUY · $15,000",
+    bar: "§0§lBUY · $15K",
     colour: "red",
     inner: "§fUNPAID UPKEEP\n§c0 §7islands can't pay their core tax right now",
     desc: "Half price. Random pick from the exposed islands.",

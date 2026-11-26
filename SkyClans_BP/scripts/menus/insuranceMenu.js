@@ -5,8 +5,8 @@ import { openMainMenu } from "./mainMenu.js";
 const ART = "textures/ui/skyclans/tier_";
 
 const TIERS = [
-  { id: "basic", name: "BASIC", colour: "§f", pct: 10, price: "$50,000", desc: "A small cushion for new clans." },
-  { id: "silver", name: "SILVER", colour: "§7", pct: 25, price: "$250,000" },
+  { id: "basic", name: "BASIC", colour: "§f", pct: 10, price: "$50K", desc: "A small cushion for new clans." },
+  { id: "silver", name: "SILVER", colour: "§7", pct: 25, price: "$250K" },
   { id: "gold", name: "GOLD", colour: "§6", pct: 50, price: "$1M" },
   { id: "diamond", name: "DIAMOND", colour: "§b", pct: 75, price: "$5M" },
 ];

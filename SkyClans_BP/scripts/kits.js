@@ -36,7 +36,7 @@ const ARMOUR = ["helmet", "chestplate", "leggings", "boots"];
 const TOOLS = ["pickaxe", "axe", "shovel", "hoe"];
 const MAT_NAME = { iron: "Iron", diamond: "Diamond", netherite: "Netherite" };
 const ROMAN = ["", "I", "II", "III", "IV", "V"];
-const money = (n) => "$" + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const money = fmt; // short money, e.g. $5K, $1.5M
 const has = (kit, x) => kit.extra?.includes(x) ?? false;
 export const kitIcon = (kit) => `textures/items/${kit.mat}_chestplate`;
 

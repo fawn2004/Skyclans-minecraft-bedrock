@@ -4,7 +4,7 @@ import { SPAWNERS } from "../spawnerConfig.js";
 import { fail, show, success, tilePages } from "../forms.js";
 import { giveSpawner } from "../spawners.js";
 import { giveKitMenu } from "../kits.js";
-import { addMoney, fmt, getBalance, setBalance } from "../money.js";
+import { addMoney, fmt, fmtExact, getBalance, setBalance } from "../money.js";
 import { getSpawn, getStartingMoney, setSidebarEnabled, setSpawnHere, setStartingMoney, sidebarEnabled } from "../serverSettings.js";
 import { clearSidebars } from "../sidebar.js";
 
@@ -77,7 +77,7 @@ function moneyPlayers(player) {
 async function moneyEdit(admin, target) {
   const form = new ModalFormData()
     .title(`Money: ${target.name}`)
-    .dropdown(`Balance: ${fmt(getBalance(target))}\n\nWhat to do`, ["Give", "Take", "Set to"], { defaultValueIndex: 0 })
+    .dropdown(`Balance: ${fmtExact(getBalance(target))}\n\nWhat to do`, ["Give", "Take", "Set to"], { defaultValueIndex: 0 })
     .textField("Amount", "e.g. 50000");
   const res = await show(admin, form);
   if (!res || res.canceled) return moneyPlayers(admin);
