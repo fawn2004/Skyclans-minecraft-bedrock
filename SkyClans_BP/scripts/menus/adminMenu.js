@@ -1,6 +1,7 @@
 import { SPAWNERS } from "../spawnerConfig.js";
 import { comingSoon, success, tilePages } from "../forms.js";
 import { giveSpawner } from "../spawners.js";
+import { giveKitMenu } from "../kits.js";
 
 const ICON = "textures/ui/skyclans/";
 
@@ -11,6 +12,7 @@ export function openAdminMenu(player) {
     body: "§7Operators only",
     tiles: [
       { text: "Give Spawner\n§7For testing", icon: "textures/blocks/mob_spawner", onClick: () => giveSpawnerMenu(player) },
+      { text: "Give Kit\n§7For testing", icon: "textures/items/diamond_chestplate", onClick: () => giveKitMenu(player, () => openAdminMenu(player)) },
       { text: "Settings\n§7Coming soon", icon: ICON + "head_settings", onClick: () => (comingSoon(player, "Admin settings"), openAdminMenu(player)) },
     ],
   });

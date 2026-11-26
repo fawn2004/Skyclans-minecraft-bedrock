@@ -2,6 +2,7 @@ import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 import { SCREEN, comingSoon, show } from "../forms.js";
 import { openMainMenu } from "./mainMenu.js";
 import { SPAWNERS } from "../spawnerConfig.js";
+import { KITS, kitsMenu } from "../kits.js";
 
 // Sky Shop: a tree of pages drawn with the simple tile grid (resource pack ui/sc_list.json).
 //
@@ -27,6 +28,7 @@ const SHOP = {
       // all 24 from spawnerConfig.js (prices are set there)
       children: SPAWNERS.map((s) => ({ name: `${s.name} Spawner`, icon: s.icon, price: s.price, spawner: s.mob })),
     },
+    { name: "Kits", icon: "textures/items/diamond_chestplate", action: "kits" }, // tiers are in kits.js
     { name: "Ores", icon: "textures/blocks/diamond_ore", children: [] },
     { name: "Farming", icon: "textures/items/wheat", children: [] },
     {
@@ -72,6 +74,7 @@ function tileText(e) {
     const word = e.children.every(isItem) ? "item" : "section";
     return `${e.name}\n§7${n} ${word}${n === 1 ? "" : "s"}`;
   }
+  if (e.action === "kits") return `${e.name}\n§7${KITS.length} tiers`;
   return `${e.name}\n§7${e.action === "search" ? "Find an item" : "Coming soon"}`;
 }
 
@@ -120,6 +123,7 @@ async function openPage(player, trail, page) {
   const picked = shown[res.selection];
   if (isCategory(picked)) return openPage(player, [...trail, picked], 0);
   if (picked.action === "search") return search(player, trail);
+  if (picked.action === "kits") return kitsMenu(player, () => openPage(player, trail, page));
   if (picked.action === "sell") comingSoon(player, "Selling");
   else comingSoon(player, `Buying ${picked.name}`);
   return openPage(player, trail, page);

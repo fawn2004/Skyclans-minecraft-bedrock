@@ -1,6 +1,6 @@
-// SkyClans spawner menu. Title marker "§s§c§7".
+// SkyClans info-panel screen (spawner menu, kit details). Title marker "§s§c§7".
 //   title (after marker) -> big title, e.g. "§l§fPIG SPAWNER"
-//   body                 -> info panel on the left (owner, stack, level, heads...)
+//   body                 -> info panel on the left (spawner stats, kit contents...)
 //   buttons              -> tiles on the right, 2 per row (same tiles as the shop)
 {
   "namespace": "sc_spawner",
@@ -20,7 +20,7 @@
           "size": [ "default", "default" ],
           "color": [ 0.62, 0.66, 0.72 ],
           "font_scale_factor": 0.8,
-          "text": "SKYCLANS  ·  SPAWNER"
+          "text": "SKYCLANS"
         }
       },
       {
