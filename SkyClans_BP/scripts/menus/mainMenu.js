@@ -9,6 +9,9 @@ import { openShopMenu } from "./shopMenu.js";
 
 const TILE = "textures/ui/skyclans/tile_";
 
+// Where the Spawn button sends you (overworld). Change these to move spawn.
+const SPAWN = { x: 0, y: 0, z: 0 };
+
 // Order here = order on screen (3 per row).
 // Each "open" is a placeholder for now - it gets replaced as each menu is built.
 const TILES = [
@@ -28,8 +31,16 @@ export async function openMainMenu(player) {
 
   const form = new ActionFormData().title(SCREEN.main + clanLine).body(stats);
   for (const t of TILES) form.button(`${t.name}\n§7${t.sub}`, TILE + t.art);
+  form.button("Spawn"); // button 6: the Spawn button under the stat chip
 
   const res = await show(player, form);
   if (!res || res.canceled || res.selection === undefined) return;
+  if (res.selection === TILES.length) return goToSpawn(player);
   await TILES[res.selection]?.open(player);
+}
+
+function goToSpawn(player) {
+  // +0.5 puts you in the middle of block 0, 0 instead of on its corner
+  player.teleport({ x: SPAWN.x + 0.5, y: SPAWN.y, z: SPAWN.z + 0.5 }, { dimension: world.getDimension("overworld") });
+  player.sendMessage("§b[SkyClans] §7Teleported to spawn.");
 }

@@ -4,7 +4,8 @@
 // main_screen:
 //   title (after the marker) -> small grey line at the top, e.g. "NO CLAN · 1 ONLINE"
 //   body                     -> the stat chip on the right, e.g. "Bank $0  Wallet $0"
-//   buttons                  -> tiles, 3 per row; the button image is the whole tile art
+//   buttons 0-5              -> tiles, 3 per row; the button image is the whole tile art
+//   button 6                 -> SPAWN button under the stat chip
 // Each tile is ONE button: the art + text are drawn once, and the hover/pressed
 // states only add a thin see-through outline on top.
 {
@@ -17,7 +18,51 @@
     "controls": [
       { "header@skyclans.header": {} },
       { "tiles@skyclans.tile_grid": {} },
-      { "footer@skyclans.footer": {} }
+      { "footer@skyclans.footer": {} },
+      {
+        "extra_buttons": {
+          "type": "collection_panel",
+          "collection_name": "form_buttons",
+          "size": [ "100%", "100%" ],
+          "layer": 5,
+          "controls": [ { "spawn@skyclans.spawn_button": { "collection_index": 6 } } ]
+        }
+      }
+    ]
+  },
+
+  // Small button under the stat chip (form button 6).
+  "spawn_button": {
+    "type": "button",
+    "size": [ 44, 13 ],
+    "anchor_from": "top_right",
+    "anchor_to": "top_right",
+    "offset": [ -26, 23 ],
+    "default_control": "default",
+    "hover_control": "hover",
+    "pressed_control": "pressed",
+    "sound_name": "random.click",
+    "focus_enabled": true,
+    "button_mappings": [
+      { "from_button_id": "button.menu_select", "to_button_id": "button.form_button_click", "mapping_type": "pressed" },
+      { "from_button_id": "button.menu_ok", "to_button_id": "button.form_button_click", "mapping_type": "focused" }
+    ],
+    "bindings": [ { "binding_type": "collection_details", "binding_collection_name": "form_buttons" } ],
+    "controls": [
+      { "default": { "type": "image", "texture": "textures/ui/skyclans/chip" } },
+      { "hover": { "type": "image", "texture": "textures/ui/skyclans/shop_cat_hover" } },
+      { "pressed": { "type": "image", "texture": "textures/ui/skyclans/shop_cat_hover" } },
+      {
+        "text": {
+          "type": "label",
+          "layer": 2,
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "size": [ "default", "default" ],
+          "font_scale_factor": 0.8,
+          "text": "§bSpawn"
+        }
+      }
     ]
   },
 
@@ -121,9 +166,8 @@
     "grid_dimensions": [ 3, 2 ],
     "grid_item_template": "skyclans.tile",
     "collection_name": "form_buttons",
-    "bindings": [
-      { "binding_name": "#form_button_length", "binding_name_override": "#maximum_grid_items" }
-    ]
+    // only the 6 tiles; button 6 is the Spawn button
+    "maximum_grid_items": 6
   },
 
   "tile": {

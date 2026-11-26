@@ -5,9 +5,9 @@ Clans add-on for Minecraft Bedrock skyblock. Built one menu at a time: each menu
 ## Install
 Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on both packs (behaviour + resources) in the world. Beta APIs are **not** needed.
 
-## What works so far (v0.9.0)
+## What works so far (v0.9.1)
 - **SkyClans Menu** item, given once to each new player, or `/give @s skyclans:menu`. Use it to open the main menu.
-- **Main menu:** Island Home, Raids, Sky Shop, Insurance, Members and Settings. Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home says "coming soon".
+- **Main menu:** Spawn button under the stat chip (teleports to 0 0 0 in the overworld; set in `mainMenu.js`). Island Home, Raids, Sky Shop, Insurance, Members and Settings. Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home says "coming soon".
 - **Settings screen:** 4 cards (Chunk Borders, Full Bright, Raid Alert Sound, Coordinates), all "coming soon" for now, plus a back arrow next to the X.
 - **Members (Chain of Command):** you shown as owner, an invite slot, the SELECTED panel with Disband Clan, and the who-can-do-what table. Invite and Disband are "coming soon".
 - **Insurance Vault:** Basic / Silver / Gold / Diamond tiers (Basic next, the rest locked), Last claim and Covers strips. Buying is "coming soon".
