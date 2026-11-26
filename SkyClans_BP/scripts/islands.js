@@ -12,13 +12,13 @@ import { isAdmin } from "./spawners.js";
 //
 //  Protection (everyone except admins):
 //   - island area: you can only build / break / open things inside your clan's plot
-//   - spawn: no building or breaking within SPAWN_PROTECT blocks of spawn
+//   - spawn: a 1000 x 1000 area around spawn - only players in CREATIVE can build / break there
 // ============================================================================
 
 const WALL_BLOCK = "minecraft:barrier";
 const WORLD_BOTTOM = -64;
 const WORLD_TOP = 320;
-const SPAWN_PROTECT = 64;
+const SPAWN_PROTECT = 500; // blocks each way from spawn = 1000 x 1000
 
 const STARTER_CHEST = [
   ["minecraft:lava_bucket", 1],
@@ -165,6 +165,14 @@ export function goHome(player) {
 }
 
 // ---- protection -----------------------------------------------------------------------
+const isCreative = (p) => {
+  try {
+    return String(p.getGameMode()).toLowerCase() === "creative";
+  } catch {
+    return false;
+  }
+};
+
 function nearSpawn(dimId, l) {
   const s = getSpawn();
   if ((s.dim ?? "minecraft:overworld") !== dimId) return false;
@@ -173,8 +181,8 @@ function nearSpawn(dimId, l) {
 
 /** Can this player change the block at l (in dimension dimId)? */
 export function canBuild(player, dimId, l) {
+  if (nearSpawn(dimId, l)) return isCreative(player); // spawn: creative only (admin tag doesn't count)
   if (isAdmin(player)) return true;
-  if (nearSpawn(dimId, l)) return false;
   if (dimId !== "minecraft:overworld" || !inIslandZone(l.x, l.z)) return true;
   const mine = clanOf(player);
   return !!mine && plotAt(l.x, l.z)?.id === mine.id;
@@ -218,7 +226,7 @@ export function registerIslands() {
     const dimId = block.dimension.id;
     const l = block.location;
     const placing = isPlacing(itemStack);
-    if (nearSpawn(dimId, l) && !isAdmin(player)) {
+    if (nearSpawn(dimId, l) && !isCreative(player)) {
       // at spawn: doors / buttons are fine, placing things isn't
       if (!placing) return;
       ev.cancel = true;
