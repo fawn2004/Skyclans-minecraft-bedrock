@@ -20,29 +20,14 @@
     "skyclans_head_cow": {
       "textures": "textures/items/heads/cow"
     },
-    "skyclans_head_mooshroom": {
-      "textures": "textures/items/heads/mooshroom"
-    },
     "skyclans_head_zombie": {
       "textures": "textures/items/heads/zombie"
-    },
-    "skyclans_head_husk": {
-      "textures": "textures/items/heads/husk"
     },
     "skyclans_head_skeleton": {
       "textures": "textures/items/heads/skeleton"
     },
     "skyclans_head_spider": {
       "textures": "textures/items/heads/spider"
-    },
-    "skyclans_head_cave_spider": {
-      "textures": "textures/items/heads/cave_spider"
-    },
-    "skyclans_head_drowned": {
-      "textures": "textures/items/heads/drowned"
-    },
-    "skyclans_head_stray": {
-      "textures": "textures/items/heads/stray"
     },
     "skyclans_head_creeper": {
       "textures": "textures/items/heads/creeper"
@@ -56,17 +41,11 @@
     "skyclans_head_magma_cube": {
       "textures": "textures/items/heads/magma_cube"
     },
-    "skyclans_head_enderman": {
-      "textures": "textures/items/heads/enderman"
-    },
     "skyclans_head_zombie_pigman": {
       "textures": "textures/items/heads/zombie_pigman"
     },
     "skyclans_head_blaze": {
       "textures": "textures/items/heads/blaze"
-    },
-    "skyclans_head_guardian": {
-      "textures": "textures/items/heads/guardian"
     },
     "skyclans_head_ghast": {
       "textures": "textures/items/heads/ghast"

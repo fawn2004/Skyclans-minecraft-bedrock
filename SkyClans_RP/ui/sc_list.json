@@ -72,10 +72,16 @@
     ]
   },
 
+  // A grid can make more boxes than there are buttons; boxes with no button
+  // behind them (no text) hide themselves.
   "tile": {
     "type": "panel",
     "size": [ 84, 60 ],
-    "controls": [ { "button@sc_list.tile_button": {} } ]
+    "controls": [ { "button@sc_list.tile_button": {} } ],
+    "bindings": [
+      { "binding_name": "#form_button_text", "binding_type": "collection", "binding_collection_name": "form_buttons" },
+      { "binding_type": "view", "source_property_name": "(not (#form_button_text = ''))", "target_property_name": "#visible" }
+    ]
   },
 
   "tile_button": {

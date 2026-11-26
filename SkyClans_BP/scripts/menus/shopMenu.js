@@ -25,7 +25,7 @@ const SHOP = {
     {
       name: "Spawners",
       icon: "textures/blocks/mob_spawner",
-      // all 24 from spawnerConfig.js (prices are set there)
+      // every spawner in spawnerConfig.js (prices are set there)
       children: SPAWNERS.map((s) => ({ name: `${s.name} Spawner`, icon: s.icon, price: s.price, spawner: s.mob })),
     },
     { name: "Kits", icon: "textures/items/diamond_chestplate", action: "kits" }, // tiers are in kits.js
