@@ -1,6 +1,8 @@
 import { world } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 import { SCREEN, comingSoon, show } from "../forms.js";
+import { fmtShort, getBalance } from "../money.js";
+import { getSpawn } from "../serverSettings.js";
 import { openSettingsMenu } from "./settingsMenu.js";
 import { openMembersMenu } from "./membersMenu.js";
 import { openInsuranceMenu } from "./insuranceMenu.js";
@@ -8,9 +10,6 @@ import { openRaidMenu } from "./raidMenu.js";
 import { openShopMenu } from "./shopMenu.js";
 
 const TILE = "textures/ui/skyclans/tile_";
-
-// Where the Spawn button sends you (overworld). Change these to move spawn.
-const SPAWN = { x: 0, y: 0, z: 0 };
 
 // Order here = order on screen (3 per row).
 // Each "open" is a placeholder for now - it gets replaced as each menu is built.
@@ -25,9 +24,9 @@ const TILES = [
 
 export async function openMainMenu(player) {
   const online = world.getPlayers().length;
-  // Placeholder header info until clans exist.
+  // Clan info is a placeholder until clans exist.
   const clanLine = `NO CLAN  ·  ${online} ONLINE`;
-  const stats = "Bank §e$0 §7 Wallet §a$0 §7 Shield §cOFF";
+  const stats = `Bank §e$0 §7 Wallet §a${fmtShort(getBalance(player))} §7 Shield §cOFF`;
 
   const form = new ActionFormData().title(SCREEN.main + clanLine).body(stats);
   for (const t of TILES) form.button(`${t.name}\n§7${t.sub}`, TILE + t.art);
@@ -39,8 +38,10 @@ export async function openMainMenu(player) {
   await TILES[res.selection]?.open(player);
 }
 
+// Spawn point: 0 0 0 until an admin uses /admin > Set Spawn Here.
 function goToSpawn(player) {
-  // +0.5 puts you in the middle of block 0, 0 instead of on its corner
-  player.teleport({ x: SPAWN.x + 0.5, y: SPAWN.y, z: SPAWN.z + 0.5 }, { dimension: world.getDimension("overworld") });
+  const s = getSpawn();
+  // +0.5 puts you in the middle of the block instead of on its corner
+  player.teleport({ x: s.x + 0.5, y: s.y, z: s.z + 0.5 }, { dimension: world.getDimension(s.dim ?? "minecraft:overworld") });
   player.sendMessage("§b[SkyClans] §7Teleported to spawn.");
 }

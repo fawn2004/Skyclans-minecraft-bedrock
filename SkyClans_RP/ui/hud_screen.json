@@ -1,0 +1,70 @@
+// SkyClans sidebar. Titles starting with "§s§c§s§b" (sent by scripts/sidebar.js)
+// are drawn as a panel on the right instead of as a big title.
+// Every other title shows as normal.
+{
+  "namespace": "hud",
+
+  "skyclans_sidebar": {
+    "type": "image",
+    "texture": "textures/ui/skyclans/window",
+    "alpha": 0.9,
+    "anchor_from": "right_middle",
+    "anchor_to": "right_middle",
+    "offset": [ -3, -12 ],
+    "size": [ "100%c + 12px", "100%c + 10px" ],
+    "layer": 2,
+    "bindings": [
+      { "binding_name": "#hud_title_text_string" },
+      {
+        "binding_type": "view",
+        "source_property_name": "(not ((#hud_title_text_string - '§s§c§s§b') = #hud_title_text_string))",
+        "target_property_name": "#visible"
+      }
+    ],
+    "controls": [
+      {
+        "text": {
+          "type": "label",
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "size": [ "default", "default" ],
+          "text": "#text",
+          "text_alignment": "center",
+          "localize": false,
+          "shadow": true,
+          "layer": 3,
+          "bindings": [
+            { "binding_name": "#hud_title_text_string" },
+            {
+              "binding_type": "view",
+              "source_property_name": "(#hud_title_text_string - '§s§c§s§b')",
+              "target_property_name": "#text"
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  // hide the normal big title while it's carrying sidebar text
+  "hud_title_text": {
+    "bindings": [
+      { "binding_name": "#hud_title_text_string" },
+      {
+        "binding_type": "view",
+        "source_property_name": "((#hud_title_text_string - '§s§c§s§b') = #hud_title_text_string)",
+        "target_property_name": "#visible"
+      }
+    ]
+  },
+
+  "root_panel": {
+    "modifications": [
+      {
+        "array_name": "controls",
+        "operation": "insert_back",
+        "value": [ { "skyclans_sidebar@hud.skyclans_sidebar": {} } ]
+      }
+    ]
+  }
+}

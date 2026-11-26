@@ -87,6 +87,18 @@ function loadAll() {
   }
 }
 
+/** How many spawners (counting stacks) a player owns. */
+export function ownedSpawnerCount(playerId) {
+  let n = 0;
+  for (const d of spawners.values()) if (d.owner === playerId) n += d.stack;
+  return n;
+}
+
+/** All of a player's head points added up. */
+export function totalHeads(player) {
+  return SPAWNERS.reduce((n, s) => n + getHeadPoints(player, s.mob), 0);
+}
+
 // ---- spawner items ---------------------------------------------------------
 export function makeSpawnerItem(mob, amount = 1, level = 1) {
   const stack = new ItemStack(SPAWNER_BLOCK, amount);

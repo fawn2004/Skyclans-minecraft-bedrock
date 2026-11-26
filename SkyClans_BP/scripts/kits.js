@@ -1,6 +1,7 @@
 import { ActionFormData } from "@minecraft/server-ui";
 import { EnchantmentTypes, ItemStack } from "@minecraft/server";
-import { NAV, SCREEN, comingSoon, show, success, tilePages } from "./forms.js";
+import { NAV, SCREEN, fail, show, success, tilePages } from "./forms.js";
+import { fmt, getBalance, takeMoney } from "./money.js";
 
 // ============================================================================
 //  KITS - tier 1 (plain iron) up to tier 15 (best netherite).
@@ -92,7 +93,7 @@ export function giveKit(player, kit) {
 const enchantText = (list) => list.map(([id, l]) => `${id.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} ${ROMAN[l] ?? l}`).join(", ");
 
 /** What's in a kit, for the info panel. */
-function kitInfo(kit) {
+function kitInfo(kit, balance) {
   const armour = enchantText(enchantsFor(kit, "helmet"));
   const boots = has(kit, "feather") ? "§8Boots also Feather Falling IV" : "";
   const sword = enchantText(enchantsFor(kit, "sword"));
@@ -109,6 +110,7 @@ function kitInfo(kit) {
     `§7Food §6${kit.apples} Golden Apples§7, §f${kit.steak} Steak`,
     "",
     `§7Price §a${money(kit.price)}`,
+    `§7You have §e${money(balance)}`,
   ]
     .filter((l, i, a) => l !== "" || (i > 0 && a[i - 1] !== ""))
     .join("\n");
@@ -120,7 +122,7 @@ export function kitsMenu(player, back, page = 0) {
     player,
     {
       title: "KITS",
-      body: "Balance §e$0", // placeholder until money exists
+      body: `Balance §e${fmt(getBalance(player))}`,
       tiles: KITS.map((k, i) => ({
         text: `Tier ${k.tier}\n§a${money(k.price)}`,
         icon: kitIcon(k),
@@ -136,13 +138,18 @@ export function kitsMenu(player, back, page = 0) {
 async function kitMenu(player, kit, back) {
   const form = new ActionFormData()
     .title(`${SCREEN.spawner}§l§fTIER ${kit.tier} KIT`)
-    .body(kitInfo(kit))
+    .body(kitInfo(kit, getBalance(player)))
     .button(`§a§lBuy\n§a${money(kit.price)}`, kitIcon(kit))
     .button("§7Back", NAV + "back");
   const res = await show(player, form);
   if (!res || res.canceled || res.selection === undefined) return;
   if (res.selection === 1) return back();
-  comingSoon(player, `Buying the Tier ${kit.tier} kit`);
+  if (!takeMoney(player, kit.price)) {
+    fail(player, `You need ${money(kit.price)} (you have ${money(getBalance(player))}).`);
+  } else {
+    giveKit(player, kit);
+    success(player, `Bought the Tier ${kit.tier} kit for ${money(kit.price)}.`);
+  }
   return kitMenu(player, kit, back);
 }
 

@@ -1,31 +1,26 @@
 import { ActionFormData } from "@minecraft/server-ui";
 import { SCREEN, show } from "../forms.js";
+import { SETTINGS, pref, setPref } from "../playerSettings.js";
 import { openMainMenu } from "./mainMenu.js";
 
 const CARD = "textures/ui/skyclans/card_";
 
-// Order = position on screen: top-left, top-right, bottom-left, bottom-right.
-// "art" picks the card picture; later the lever will flip by using _on / _off.
-const SETTINGS = [
-  { name: "Chunk Borders", desc: "Outline the chunk you are standing in.", art: "chunks" },
-  { name: "Full Bright", desc: "See clearly at night without torches.", art: "bright" },
-  { name: "Raid Alert Sound", desc: "Warning sound when raiders start bridging.", art: "alert" },
-  { name: "Coordinates", desc: "Show X / Y / Z and facing on the action bar.", art: "coords" },
-];
-
+// Tap a card to flip its lever. The settings themselves run in playerSettings.js.
 export async function openSettingsMenu(player) {
-  const form = new ActionFormData().title(SCREEN.settings + "ONLY YOU SEE THESE").body("Pull a lever to switch it");
+  const form = new ActionFormData().title(SCREEN.settings + "ONLY YOU SEE THESE").body("Tap a card to switch it");
   for (const s of SETTINGS) {
-    // Placeholder: every setting shows COMING SOON with the lever off.
-    form.button(`${s.name}\n§7${s.desc}\n§8COMING SOON`, `${CARD}${s.art}_off`);
+    const on = pref(player, s.id);
+    form.button(`${s.name}\n§7${s.desc}\n${on ? "§aON" : "§8OFF"}`, `${CARD}${s.art}_${on ? "on" : "off"}`);
   }
   form.button("Back"); // button 4 = the back arrow next to the X
 
   const res = await show(player, form);
   if (!res || res.canceled || res.selection === undefined) return;
-
   if (res.selection === SETTINGS.length) return openMainMenu(player);
 
-  player.sendMessage(`§b[SkyClans] §f${SETTINGS[res.selection].name} §7- coming soon`);
+  const s = SETTINGS[res.selection];
+  const on = !pref(player, s.id);
+  setPref(player, s.id, on);
+  player.playSound(on ? "random.click" : "random.click", { pitch: on ? 1.2 : 0.8 });
   return openSettingsMenu(player);
 }
