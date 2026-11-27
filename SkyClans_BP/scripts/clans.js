@@ -14,11 +14,11 @@ import { world } from "@minecraft/server";
 
 export const MAX_MEMBERS = 5;
 
-// Island plots: centres go diagonally 10000/10000, 10500/10500, 11000/11000 ...
-// SPACING = biggest size (300) + a 200 block gap.
+// Island plots: centres go diagonally 10000/10000, 10700/10700, 11400/11400 ...
+// SPACING 700 = biggest size (300) + a 400 block gap, so even maxed-out islands stay well apart.
 export const ISLAND = {
   first: 10000,
-  spacing: 500,
+  spacing: 700,
   sizes: [100, 150, 200, 300], // starting size, then 3 upgrades (Island Core - next stage)
   y: 64, // height of the island's grass
 };
@@ -101,12 +101,10 @@ export const islandCentre = (index) => ISLAND.first + index * ISLAND.spacing;
 
 /** The clan whose plot contains x,z (inside its current size), or undefined. */
 export function plotAt(x, z) {
-  const ix = Math.round((x - ISLAND.first) / ISLAND.spacing);
-  const iz = Math.round((z - ISLAND.first) / ISLAND.spacing);
-  if (ix !== iz || ix < 0) return undefined;
+  // checks each island's own saved centre, so islands made with an older spacing still work
   for (const c of clans.values()) {
     const is = c.island;
-    if (!is || is.index !== ix) continue;
+    if (!is) continue;
     const half = is.size / 2;
     if (x >= is.cx - half && x < is.cx + half && z >= is.cz - half && z < is.cz + half) return c;
   }
@@ -114,7 +112,7 @@ export function plotAt(x, z) {
 }
 
 /** True for anywhere in the island area (plots and the gaps between them). */
-export const inIslandZone = (x, z) => x >= ISLAND.first - ISLAND.spacing / 2 && z >= ISLAND.first - ISLAND.spacing / 2;
+export const inIslandZone = (x, z) => x >= ISLAND.first - 250 && z >= ISLAND.first - 250;
 
 // ---- clan actions (each returns an error message, or undefined if it worked) -----------
 const NAME_OK = /^[A-Za-z0-9 ]{3,16}$/;
