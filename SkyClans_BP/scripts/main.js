@@ -13,6 +13,7 @@ import { openCoreMenu } from "./menus/coreMenu.js";
 import { registerIslandUpgrades } from "./islandUpgrades.js";
 import { registerNpcs } from "./npcs.js";
 import { registerIslandClear } from "./islandClear.js";
+import { registerKeyDrops } from "./keyDrops.js";
 
 registerSpawners();
 registerSidebar();
@@ -22,6 +23,7 @@ registerIslands(); // island protection
 registerIslandUpgrades(); // core upgrades, upkeep, island fly, border moves
 registerNpcs(); // shop NPCs
 registerIslandClear(); // disbanded islands are cleared back to air
+registerKeyDrops(); // spawner-shop mobs can drop crate keys
 world.afterEvents.worldLoad.subscribe(() => loadClans());
 
 const MENU_ITEM = "skyclans:menu";
