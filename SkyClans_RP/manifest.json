@@ -1,13 +1,13 @@
 {
   "format_version": 2,
   "header": {
-    "name": "§bSkyClans §7(Resources) §ev0.13.3",
+    "name": "§bSkyClans §7(Resources) §ev0.13.4",
     "description": "SkyClans menus and textures",
     "uuid": "efd4f6aa-667d-4265-84b5-483c2cbc3414",
-    "version": [0, 13, 3],
+    "version": [0, 13, 4],
     "min_engine_version": [1, 21, 90]
   },
   "modules": [
-    { "type": "resources", "uuid": "20607a7e-9079-4f9a-be5b-2bc96a0293fe", "version": [0, 13, 3] }
+    { "type": "resources", "uuid": "20607a7e-9079-4f9a-be5b-2bc96a0293fe", "version": [0, 13, 4] }
   ]
 }

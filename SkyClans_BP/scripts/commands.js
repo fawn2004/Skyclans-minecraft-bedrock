@@ -18,7 +18,8 @@ import { bankMenu, clanSetupMenu, confirmKick, confirmLeaveOrDisband, createClan
 //  Players:  /spawn /menu /shop /sell <hand|all> /bal /baltop /pay /kits
 //            /crates /settings /coords
 //            /is <create|home|sethome|invite|join|leave|kick|promote|demote|transfer|
-//                 info|members|bank|deposit|withdraw|disband> [name / amount]
+//                 info|members|bank|deposit|withdraw|disband> [name]
+//            /deposit <amount>  /withdraw <amount>   (clan bank)
 //  Admins (players with the "admin" tag - /tag <name> add admin):
 //            /admin /eco /givekey /setspawn /broadcast
 //  Typed without the "skyclans:" part, e.g. /spawn. Cheats don't need to be on.
@@ -127,6 +128,10 @@ export function registerCommands() {
       ]
     );
 
+    // ---- clan bank: /deposit <amount>  /withdraw <amount> ----------------------------------
+    cmd("deposit", "Put money in your clan bank", playerOnly((p, n) => bankMove(p, "deposit", n)), [{ name: "amount", type: P.Integer }]);
+    cmd("withdraw", "Take money out of your clan bank (owner / co-owner)", playerOnly((p, n) => bankMove(p, "withdraw", n)), [{ name: "amount", type: P.Integer }]);
+
     // ---- islands & clans: /is <action> [name or amount] ------------------------------------
     reg.registerEnum("skyclans:isaction", IS_ACTIONS);
     cmd(
@@ -204,6 +209,16 @@ export function registerCommands() {
   });
 }
 
+/** Moves money between the player's wallet and their clan bank. */
+function bankMove(p, action, n) {
+  const clan = clanOf(p);
+  if (!clan) return fail(p, "You're not in a clan.");
+  const err = action === "deposit" ? deposit(p, n, takeMoney) : withdraw(p, n, addMoney);
+  if (err) return fail(p, err);
+  ok(p, `${action === "deposit" ? "Deposited" : "Withdrew"} ${fmt(n)}. Clan bank: ${fmt(clanOf(p).bank)}.`);
+  tellClan(clan, `§b[${clan.name}] §f${p.name} §7${action === "deposit" ? "deposited" : "withdrew"} §a${fmt(n)}§7.`, p.id);
+}
+
 // ---- /is --------------------------------------------------------------------------------
 const IS_ACTIONS = [
   "create", "home", "sethome", "invite", "join", "leave", "kick", "promote", "demote",
@@ -277,14 +292,11 @@ function isCommand(p, action, text) {
     }
     case "deposit":
     case "withdraw": {
+      // Bedrock won't put a plain number in the /is text slot, so with no amount
+      // this opens the clan bank; /deposit <amount> and /withdraw <amount> take numbers.
       const n = amountOf(text);
-      if (!(n > 0)) return fail(p, `How much? /is ${action} <amount>`);
-      err = action === "deposit" ? deposit(p, n, takeMoney) : withdraw(p, n, addMoney);
-      if (!err) {
-        ok(p, `${action === "deposit" ? "Deposited" : "Withdrew"} ${fmt(n)}. Clan bank: ${fmt(clanOf(p).bank)}.`);
-        tellClan(clan, `§b[${clan.name}] §f${p.name} §7${action === "deposit" ? "deposited" : "withdrew"} §a${fmt(n)}§7.`, p.id);
-      }
-      break;
+      if (!(n > 0)) return bankMenu(p);
+      return bankMove(p, action, n);
     }
     case "info": {
       const lines = membersOf(clan).map((m) => `§7- §f${m.name} §8(${RANKS[m.rank]})`);
