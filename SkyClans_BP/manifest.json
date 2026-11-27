@@ -1,25 +1,25 @@
 {
   "format_version": 2,
   "header": {
-    "name": "§bSkyClans §7(Behaviour) §ev0.15.3",
+    "name": "§bSkyClans §7(Behaviour) §ev0.16.0",
     "description": "SkyClans - clans for skyblock",
     "uuid": "399a354b-fc01-4441-8896-7528b2d6ed43",
-    "version": [0, 15, 3],
+    "version": [0, 16, 0],
     "min_engine_version": [1, 21, 90]
   },
   "modules": [
-    { "type": "data", "uuid": "c3d76916-0e52-46c9-8261-bbc70e6f4be4", "version": [0, 15, 3] },
+    { "type": "data", "uuid": "c3d76916-0e52-46c9-8261-bbc70e6f4be4", "version": [0, 16, 0] },
     {
       "type": "script",
       "language": "javascript",
       "uuid": "6c0f3a52-3b7e-4d6b-9a51-2f7d8e1c4b90",
       "entry": "scripts/main.js",
-      "version": [0, 15, 3]
+      "version": [0, 16, 0]
     }
   ],
   "dependencies": [
     { "module_name": "@minecraft/server", "version": "2.6.0" },
     { "module_name": "@minecraft/server-ui", "version": "2.0.0" },
-    { "uuid": "efd4f6aa-667d-4265-84b5-483c2cbc3414", "version": [0, 15, 3] }
+    { "uuid": "efd4f6aa-667d-4265-84b5-483c2cbc3414", "version": [0, 16, 0] }
   ]
 }

@@ -19,7 +19,7 @@ export const MAX_MEMBERS = 5;
 export const ISLAND = {
   first: 10000,
   spacing: 700,
-  sizes: [100, 150, 200, 300], // starting size, then 3 upgrades (Island Core - next stage)
+  size: 150, // every island is 150 x 150 (no size upgrades)
   y: 64, // height of the island's grass
 };
 
@@ -135,7 +135,7 @@ export function createClan(player, name) {
     created: Date.now(),
     bank: 0,
     members: { [player.id]: { name: player.name, rank: "owner", joined: Date.now() } },
-    island: { index, cx: centre, cz: centre, size: ISLAND.sizes[0], built: false, home: { x: centre, y: ISLAND.y + 1, z: centre } },
+    island: { index, cx: centre, cz: centre, size: ISLAND.size, built: false, home: { x: centre, y: ISLAND.y + 1, z: centre } },
   };
   save(clan);
   player.setDynamicProperty("skyclans:clan", id);

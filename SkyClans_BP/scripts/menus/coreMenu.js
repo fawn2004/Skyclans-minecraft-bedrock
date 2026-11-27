@@ -32,14 +32,18 @@ function cardText(clan, m) {
   const max = m.prices.length;
   let effect = m.effect(lvl);
   if (m.id === "spawners") effect = `${clanSpawnerCount(clan)} / ${10 + lvl * 5} spawners`;
-  const moving = m.id === "size" ? wallProgress(clan) : undefined;
-  if (moving !== undefined && !clan.island.wallJob?.repair) effect = `§eBorder moving ${moving}%`;
   const bottom = lvl >= max ? "§aMAXED" : `§e${fmt(m.prices[lvl])}`;
   return `§f${m.name} §8${lvl}/${max}\n${pips(lvl, max)}\n§7${effect}\n${bottom}`;
 }
 
 /** Upkeep lines for the left panel. */
 function upkeepLines(clan) {
+  const border = wallProgress(clan);
+  const borderLine = border === undefined ? "" : `\n\n§eBuilding border ${border}%`;
+  return upkeepOnly(clan) + borderLine;
+}
+
+function upkeepOnly(clan) {
   const cost = upkeepPerHour(clan);
   if (cost === 0) return ["§7Upkeep §aFree", "§8Upgrades cost", `§8${fmt(UPKEEP_PER_LEVEL)} / hr per level`].join("\n");
   const hours = Math.floor(clan.bank / cost);
@@ -114,7 +118,6 @@ async function upgradeConfirm(player, m, back) {
     else {
       success(player, `${m.name} is now level ${lvl + 1}!`);
       player.playSound("random.levelup");
-      if (m.id === "size") player.sendMessage("§7Moving your island border... this can take a minute.");
     }
   }
   return back();

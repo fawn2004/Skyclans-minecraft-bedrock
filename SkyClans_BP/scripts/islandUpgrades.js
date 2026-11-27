@@ -1,4 +1,4 @@
-import { system, world } from "@minecraft/server";
+import { BlockVolume, system, world } from "@minecraft/server";
 import { ISLAND, can, clanOf, allClans, onlineMembers, plotAt, saveClan } from "./clans.js";
 import { fmt } from "./money.js";
 
@@ -18,13 +18,6 @@ const HOUR = 60 * 60 * 1000;
 
 // prices[i] = cost of going from level i to level i+1
 export const MODULES = [
-  {
-    id: "size",
-    name: "Island Size",
-    icon: "textures/ui/skyclans/icon_expand",
-    prices: [250000, 1000000, 5000000],
-    effect: (lvl) => `Border ${ISLAND.sizes[lvl]} x ${ISLAND.sizes[lvl]}`,
-  },
   {
     id: "sell",
     name: "Sell Multiplier",
@@ -135,14 +128,12 @@ export function buyUpgrade(player, moduleId) {
   const m = moduleById(moduleId);
   const lvl = levelOf(clan, m.id);
   if (lvl >= m.prices.length) return `${m.name} is already maxed.`;
-  if (m.id === "size" && clan.island.wallJob) return `The island border is still being built (${wallProgress(clan)}%) - try again when it's done.`;
   const price = m.prices[lvl];
   if (clan.bank < price) return `The clan bank needs ${fmt(price)} (it has ${fmt(clan.bank)}).`;
   clan.bank -= price;
   upgrades(clan)[m.id] = lvl + 1;
   if (totalLevels(clan) === 1) upkeepState(clan).next = Date.now() + HOUR; // first upkeep in an hour
   saveClan(clan);
-  if (m.id === "size") resizeIsland(clan, ISLAND.sizes[lvl], ISLAND.sizes[lvl + 1]);
   tell(clan, `§b[${clan.name}] §f${player.name} §7upgraded §f${m.name} §7to level §f${lvl + 1}§7: ${m.effect(lvl + 1)}.`);
 }
 
@@ -168,11 +159,26 @@ function wallSlices(cx, cz, size) {
   return out;
 }
 
-export function resizeIsland(clan, oldSize, newSize) {
-  clan.island.size = newSize;
-  clan.island.wallJob = { oldSize, newSize, step: 0 };
-  saveClan(clan);
+/** Starts building / fixing border walls in the background (new islands call this). */
+export function queueWalls() {
   runWallJobs();
+}
+
+// Island Size used to be an upgrade (100 -> 150 -> 200 -> 300). Now every island is
+// ISLAND.size; clans that bought size levels get the money back in their clan bank.
+const OLD_SIZE_PRICES = [250000, 1000000, 5000000];
+function migrateSize(clan) {
+  const ups = clan.island.upgrades ?? {};
+  if (ups.size) {
+    const refund = OLD_SIZE_PRICES.slice(0, ups.size).reduce((a, b) => a + b, 0);
+    clan.bank += refund;
+    delete ups.size;
+    tell(clan, `§b[SkyClans] §7Island Size upgrades were removed - every island is now ${ISLAND.size} x ${ISLAND.size}. §a${fmt(refund)} §7was refunded to your clan bank.`);
+  }
+  if (clan.island.size !== ISLAND.size && !clan.island.wallJob) {
+    clan.island.wallJob = { oldSize: clan.island.size, newSize: ISLAND.size, step: 0 };
+    clan.island.size = ISLAND.size;
+  }
 }
 
 /** 0-100 while the border is moving, else undefined. */
@@ -188,7 +194,8 @@ async function runWallJobs() {
   wallBusy = true;
   try {
     for (const clan of allClans()) {
-      // islands built before v0.15.2 had walls only up to Y 127: rebuild them full height once
+      if (clan.island.built) migrateSize(clan);
+      // new islands, and islands built before v0.15.2 (walls only to Y 127): build full height once
       if (!clan.island.wallJob && clan.island.built && !clan.island.wallsFull) {
         clan.island.wallJob = { oldSize: null, newSize: clan.island.size, step: 0, repair: true };
         saveClan(clan);
@@ -208,8 +215,8 @@ async function wallJob(clan) {
   const job = clan.island.wallJob;
   // first remove the old walls (only barrier blocks), then build the new ones
   const steps = [
-    ...(job.oldSize ? wallSlices(cx, cz, job.oldSize).map((s) => ({ ...s, cmd: "air replace barrier" })) : []),
-    ...wallSlices(cx, cz, job.newSize).map((s) => ({ ...s, cmd: WALL })),
+    ...(job.oldSize ? wallSlices(cx, cz, job.oldSize).map((s) => ({ ...s, remove: true })) : []),
+    ...wallSlices(cx, cz, job.newSize).map((s) => ({ ...s, remove: false })),
   ];
   const area = `skyclans_wall_${clan.island.index}`;
   let lastTold = Math.floor((job.step / steps.length) * 4);
@@ -225,9 +232,7 @@ async function wallJob(clan) {
       return; // runWallJobs tries again in 30 seconds
     }
     for (const [ya, yb] of [[WALL_BOTTOM, 127], [128, WALL_TOP]]) {
-      try {
-        dim.runCommand(`fill ${s.from.x} ${ya} ${s.from.z} ${s.to.x} ${yb} ${s.to.z} ${s.cmd}`);
-      } catch {} // "air replace barrier" where there's no barrier "fails" - that's fine
+      fillSlice(dim, { x: s.from.x, y: ya, z: s.from.z }, { x: s.to.x, y: yb, z: s.to.z }, s.remove);
     }
     job.step = i + 1;
     if (i % 8 === 0) saveClan(clan);
@@ -244,6 +249,19 @@ async function wallJob(clan) {
   clan.island.wallsFull = true;
   saveClan(clan);
   if (!job.repair) tell(clan, `§a✔ Your island border is now ${job.newSize} x ${job.newSize}.`);
+}
+
+/** Fills one slice: barrier (build) or barrier -> air (remove). Script fill first, /fill as backup. */
+function fillSlice(dim, from, to, remove) {
+  try {
+    if (remove) dim.fillBlocks(new BlockVolume(from, to), "minecraft:air", { blockFilter: { includeTypes: [WALL] } });
+    else dim.fillBlocks(new BlockVolume(from, to), WALL);
+    return;
+  } catch {}
+  const cmd = remove ? "air replace barrier" : WALL;
+  try {
+    dim.runCommand(`fill ${from.x} ${from.y} ${from.z} ${to.x} ${to.y} ${to.z} ${cmd}`);
+  } catch {} // removing where there's no barrier "fails" - that's fine
 }
 
 /** Loads both ends of a wall slice (with a small ticking area if needed). */

@@ -1,12 +1,13 @@
 import { BlockTypes, BlockVolume, ItemStack, system, world } from "@minecraft/server";
 import { ISLAND, clanById, clanOf, inIslandZone, markIslandBuilt, plotAt } from "./clans.js";
 import { getSpawn } from "./serverSettings.js";
+import { queueWalls } from "./islandUpgrades.js";
 import { isAdmin } from "./spawners.js";
 
 // ============================================================================
 //  ISLANDS - building a clan's starter island and border, /is home, protection.
 //
-//  The plot is ISLAND.sizes[0] (100) blocks square around the island centre.
+//  The plot is ISLAND.size (150) blocks square around the island centre.
 //  A wall of barrier blocks (invisible, unbreakable) stands just outside it,
 //  from the bottom of the world (-64) to the top (319).
 //
@@ -139,9 +140,11 @@ export async function buildIsland(player, clan) {
       return;
     }
     buildStarterIsland(dim, cx, cz);
-    buildWalls(dim, cx, cz, size);
-    clan.island.wallsFull = true; // built full height
+    // the border wall is built in slices in the background (islandUpgrades.js), which
+    // loads each part of it as it goes - more reliable than one big fill
+    clan.island.wallsFull = false;
     markIslandBuilt(clan);
+    queueWalls();
     ensureCore(clan);
     player.sendMessage("§a✔ Your island is ready!");
   } finally {
