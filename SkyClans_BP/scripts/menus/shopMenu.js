@@ -3,6 +3,7 @@ import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 import { NAV, SCREEN, fail, show, success, tilePages } from "../forms.js";
 import { openMainMenu } from "./mainMenu.js";
 import { SPAWNERS } from "../spawnerConfig.js";
+import { BLOCKS, CONCRETE, CONCRETE_POWDER, FARMING, FOOD, LIGHTS, ORES, REDSTONE, TERRACOTTA, WOOD, WOOL } from "../shopItems.js";
 import { KITS, kitsMenu } from "../kits.js";
 import { giveSpawner } from "../spawners.js";
 import { addMoney, fmt, getBalance, takeMoney } from "../money.js";
@@ -16,8 +17,7 @@ import { sellMultiplier } from "../islandUpgrades.js";
 // or a special tile: { name, icon, action: "search" | "sell" | "kits" }.
 // A category with an empty children list shows "Nothing here yet".
 //
-// To add items, put them in the right children list, e.g. in Wood:
-//   { name: "Oak Log", id: "minecraft:oak_log", icon: "textures/blocks/log_oak", price: 3 },
+// The items themselves (names, prices, icons) are in shopItems.js.
 //
 // id    = the item's game ID (what gets given / what can be sold)
 // price = buy price for ONE
@@ -38,33 +38,29 @@ const SHOP = {
       children: SPAWNERS.map((s) => ({ name: `${s.name} Spawner`, icon: s.icon, price: s.price, spawner: s.mob })),
     },
     { name: "Kits", icon: "textures/items/diamond_chestplate", action: "kits" }, // tiers are in kits.js
-    { name: "Ores", icon: "textures/blocks/diamond_ore", children: [] },
-    { name: "Farming", icon: "textures/items/wheat", children: [] },
+    { name: "Ores", icon: "textures/blocks/diamond_ore", children: ORES },
+    { name: "Farming", icon: "textures/items/wheat", children: FARMING },
     {
       name: "Blocks",
       icon: "textures/blocks/grass_side_carried",
       children: [
+        { name: "Blocks", icon: "textures/blocks/stonebrick", children: BLOCKS },
+        { name: "Wood", icon: "textures/blocks/log_oak", children: WOOD },
+        { name: "Lights", icon: "textures/blocks/glowstone", children: LIGHTS },
         {
-          name: "Blocks",
-          icon: "textures/blocks/stonebrick",
+          name: "Coloured Blocks",
+          icon: "textures/blocks/wool_colored_red",
           children: [
-            // placeholders - swap for the real list
-            { name: "Cobblestone", id: "minecraft:cobblestone", price: 2, icon: "textures/blocks/cobblestone" },
-            { name: "Dirt", id: "minecraft:dirt", price: 5, icon: "textures/blocks/dirt" },
-            { name: "Sandstone", id: "minecraft:sandstone", price: 20, icon: "textures/blocks/sandstone_top" },
-            { name: "Netherrack", id: "minecraft:netherrack", price: 1, icon: "textures/blocks/netherrack" },
-            { name: "Scaffolding", id: "minecraft:scaffolding", price: 4, icon: "textures/blocks/scaffolding_top" },
-            { name: "White Wool", id: "minecraft:white_wool", price: 5, icon: "textures/blocks/wool_colored_white" },
-            { name: "Stone", id: "minecraft:stone", price: 2, icon: "textures/blocks/stone" },
+            { name: "Wool", icon: "textures/blocks/wool_colored_lime", children: WOOL },
+            { name: "Terracotta", icon: "textures/blocks/hardened_clay_stained_orange", children: TERRACOTTA },
+            { name: "Concrete Powder", icon: "textures/blocks/concrete_powder_light_blue", children: CONCRETE_POWDER },
+            { name: "Concrete", icon: "textures/blocks/concrete_magenta", children: CONCRETE },
           ],
         },
-        { name: "Wood", icon: "textures/blocks/log_oak", children: [] },
-        { name: "Lights", icon: "textures/blocks/glowstone", children: [] },
-        { name: "Coloured Blocks", icon: "textures/blocks/wool_colored_red", children: [] },
       ],
     },
-    { name: "Redstone", icon: "textures/items/redstone_dust", children: [] },
-    { name: "Food", icon: "textures/items/apple", children: [] },
+    { name: "Redstone", icon: "textures/items/redstone_dust", children: REDSTONE },
+    { name: "Food", icon: "textures/items/apple", children: FOOD },
     { name: "Search", icon: "textures/items/spyglass", action: "search" },
     { name: "Sell", icon: "textures/items/emerald", action: "sell" },
   ],
