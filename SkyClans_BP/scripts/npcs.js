@@ -20,7 +20,7 @@ export const NPC_TYPES = {
   food: { name: "§e§lFood Shop", category: "Food" },
 };
 
-const nameTag = (type) => `${NPC_TYPES[type].name}\n§r§7Tap to open`;
+const nameTag = (type) => `${NPC_TYPES[type].name}\n§r§7Tap to §f[§aBuy§f]`;
 
 /** Places an NPC where the player stands, facing them. -> the entity */
 export function spawnNpc(player, type) {
