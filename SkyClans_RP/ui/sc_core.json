@@ -190,7 +190,7 @@
      "texture": "textures/ui/skyclans/list_tile",
      "size": [
       76,
-      51
+      66
      ],
      "anchor_from": "top_left",
      "anchor_to": "top_left",
@@ -206,7 +206,7 @@
      "texture": "textures/ui/skyclans/list_tile",
      "size": [
       76,
-      51
+      66
      ],
      "anchor_from": "top_left",
      "anchor_to": "top_left",
@@ -222,7 +222,7 @@
      "texture": "textures/ui/skyclans/list_tile",
      "size": [
       76,
-      51
+      66
      ],
      "anchor_from": "top_left",
      "anchor_to": "top_left",
@@ -238,13 +238,13 @@
      "texture": "textures/ui/skyclans/list_tile",
      "size": [
       76,
-      51
+      66
      ],
      "anchor_from": "top_left",
      "anchor_to": "top_left",
      "offset": [
       112,
-      95
+      112
      ]
     }
    },
@@ -254,13 +254,13 @@
      "texture": "textures/ui/skyclans/list_tile",
      "size": [
       76,
-      51
+      66
      ],
      "anchor_from": "top_left",
      "anchor_to": "top_left",
      "offset": [
       190,
-      95
+      112
      ]
     }
    },
@@ -270,45 +270,13 @@
      "texture": "textures/ui/skyclans/list_tile",
      "size": [
       76,
-      51
+      66
      ],
      "anchor_from": "top_left",
      "anchor_to": "top_left",
      "offset": [
       268,
-      95
-     ]
-    }
-   },
-   {
-    "card6": {
-     "type": "image",
-     "texture": "textures/ui/skyclans/list_tile",
-     "size": [
-      76,
-      51
-     ],
-     "anchor_from": "top_left",
-     "anchor_to": "top_left",
-     "offset": [
-      112,
-      148
-     ]
-    }
-   },
-   {
-    "card7": {
-     "type": "image",
-     "texture": "textures/ui/skyclans/list_tile",
-     "size": [
-      76,
-      51
-     ],
-     "anchor_from": "top_left",
-     "anchor_to": "top_left",
-     "offset": [
-      190,
-      148
+      112
      ]
     }
    },
@@ -339,7 +307,7 @@
          150,
          13
         ],
-        "collection_index": 16,
+        "collection_index": 12,
         "bindings": [
          {
           "binding_name": "#form_button_text",
@@ -366,7 +334,7 @@
          268,
          13
         ],
-        "collection_index": 17,
+        "collection_index": 13,
         "bindings": [
          {
           "binding_name": "#form_button_text",
@@ -393,7 +361,7 @@
          6,
          35
         ],
-        "collection_index": 18,
+        "collection_index": 14,
         "bindings": [
          {
           "binding_name": "#form_button_text",
@@ -439,7 +407,7 @@
          88,
          16
         ],
-        "collection_index": 19,
+        "collection_index": 15,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
@@ -553,15 +521,15 @@
          60,
          "default"
         ],
-        "font_scale_factor": 0.5,
+        "font_scale_factor": 0.55,
         "text_alignment": "left",
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
          115,
-         45
+         46
         ],
-        "collection_index": 8,
+        "collection_index": 6,
         "bindings": [
          {
           "binding_name": "#form_button_text",
@@ -575,15 +543,15 @@
        "card_icon0": {
         "type": "image",
         "size": [
-         9,
-         9
+         10,
+         10
         ],
-        "collection_index": 8,
+        "collection_index": 6,
         "layer": 6,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         176,
+         175,
          45
         ],
         "bindings": [
@@ -606,15 +574,15 @@
        "upgrade0": {
         "type": "button",
         "size": [
-         33,
-         10
+         35,
+         11
         ],
         "collection_index": 0,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         152,
-         80
+         150,
+         94
         ],
         "default_control": "default",
         "hover_control": "hover",
@@ -685,15 +653,15 @@
          60,
          "default"
         ],
-        "font_scale_factor": 0.5,
+        "font_scale_factor": 0.55,
         "text_alignment": "left",
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
          193,
-         45
+         46
         ],
-        "collection_index": 9,
+        "collection_index": 7,
         "bindings": [
          {
           "binding_name": "#form_button_text",
@@ -707,15 +675,15 @@
        "card_icon1": {
         "type": "image",
         "size": [
-         9,
-         9
+         10,
+         10
         ],
-        "collection_index": 9,
+        "collection_index": 7,
         "layer": 6,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         254,
+         253,
          45
         ],
         "bindings": [
@@ -738,15 +706,15 @@
        "upgrade1": {
         "type": "button",
         "size": [
-         33,
-         10
+         35,
+         11
         ],
         "collection_index": 1,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         230,
-         80
+         228,
+         94
         ],
         "default_control": "default",
         "hover_control": "hover",
@@ -817,15 +785,15 @@
          60,
          "default"
         ],
-        "font_scale_factor": 0.5,
+        "font_scale_factor": 0.55,
         "text_alignment": "left",
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
          271,
-         45
+         46
         ],
-        "collection_index": 10,
+        "collection_index": 8,
         "bindings": [
          {
           "binding_name": "#form_button_text",
@@ -839,15 +807,15 @@
        "card_icon2": {
         "type": "image",
         "size": [
-         9,
-         9
+         10,
+         10
         ],
-        "collection_index": 10,
+        "collection_index": 8,
         "layer": 6,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         332,
+         331,
          45
         ],
         "bindings": [
@@ -870,15 +838,15 @@
        "upgrade2": {
         "type": "button",
         "size": [
-         33,
-         10
+         35,
+         11
         ],
         "collection_index": 2,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         308,
-         80
+         306,
+         94
         ],
         "default_control": "default",
         "hover_control": "hover",
@@ -949,15 +917,15 @@
          60,
          "default"
         ],
-        "font_scale_factor": 0.5,
+        "font_scale_factor": 0.55,
         "text_alignment": "left",
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
          115,
-         98
+         116
         ],
-        "collection_index": 11,
+        "collection_index": 9,
         "bindings": [
          {
           "binding_name": "#form_button_text",
@@ -971,16 +939,16 @@
        "card_icon3": {
         "type": "image",
         "size": [
-         9,
-         9
+         10,
+         10
         ],
-        "collection_index": 11,
+        "collection_index": 9,
         "layer": 6,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         176,
-         98
+         175,
+         115
         ],
         "bindings": [
          {
@@ -1002,15 +970,15 @@
        "upgrade3": {
         "type": "button",
         "size": [
-         33,
-         10
+         35,
+         11
         ],
         "collection_index": 3,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         152,
-         133
+         150,
+         164
         ],
         "default_control": "default",
         "hover_control": "hover",
@@ -1081,15 +1049,15 @@
          60,
          "default"
         ],
-        "font_scale_factor": 0.5,
+        "font_scale_factor": 0.55,
         "text_alignment": "left",
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
          193,
-         98
+         116
         ],
-        "collection_index": 12,
+        "collection_index": 10,
         "bindings": [
          {
           "binding_name": "#form_button_text",
@@ -1103,16 +1071,16 @@
        "card_icon4": {
         "type": "image",
         "size": [
-         9,
-         9
+         10,
+         10
         ],
-        "collection_index": 12,
+        "collection_index": 10,
         "layer": 6,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         254,
-         98
+         253,
+         115
         ],
         "bindings": [
          {
@@ -1134,15 +1102,15 @@
        "upgrade4": {
         "type": "button",
         "size": [
-         33,
-         10
+         35,
+         11
         ],
         "collection_index": 4,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         230,
-         133
+         228,
+         164
         ],
         "default_control": "default",
         "hover_control": "hover",
@@ -1213,15 +1181,15 @@
          60,
          "default"
         ],
-        "font_scale_factor": 0.5,
+        "font_scale_factor": 0.55,
         "text_alignment": "left",
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
          271,
-         98
+         116
         ],
-        "collection_index": 13,
+        "collection_index": 11,
         "bindings": [
          {
           "binding_name": "#form_button_text",
@@ -1235,16 +1203,16 @@
        "card_icon5": {
         "type": "image",
         "size": [
-         9,
-         9
+         10,
+         10
         ],
-        "collection_index": 13,
+        "collection_index": 11,
         "layer": 6,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         332,
-         98
+         331,
+         115
         ],
         "bindings": [
          {
@@ -1266,279 +1234,15 @@
        "upgrade5": {
         "type": "button",
         "size": [
-         33,
-         10
+         35,
+         11
         ],
         "collection_index": 5,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         308,
-         133
-        ],
-        "default_control": "default",
-        "hover_control": "hover",
-        "pressed_control": "pressed",
-        "sound_name": "random.click",
-        "focus_enabled": true,
-        "button_mappings": [
-         {
-          "from_button_id": "button.menu_select",
-          "to_button_id": "button.form_button_click",
-          "mapping_type": "pressed"
-         },
-         {
-          "from_button_id": "button.menu_ok",
-          "to_button_id": "button.form_button_click",
-          "mapping_type": "focused"
-         }
-        ],
-        "bindings": [
-         {
-          "binding_type": "collection_details",
-          "binding_collection_name": "form_buttons"
-         }
-        ],
-        "controls": [
-         {
-          "default": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/btn_upg"
-          }
-         },
-         {
-          "hover": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/btn_upg_hover"
-          }
-         },
-         {
-          "pressed": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/btn_upg_hover"
-          }
-         },
-         {
-          "text": {
-           "type": "label",
-           "layer": 2,
-           "size": [
-            "100% - 4px",
-            "default"
-           ],
-           "font_scale_factor": 0.5,
-           "text_alignment": "center",
-           "anchor_from": "center",
-           "anchor_to": "center",
-           "text": "UPGRADE"
-          }
-         }
-        ]
-       }
-      },
-      {
-       "card_text6": {
-        "type": "label",
-        "text": "#form_button_text",
-        "layer": 6,
-        "size": [
-         60,
-         "default"
-        ],
-        "font_scale_factor": 0.5,
-        "text_alignment": "left",
-        "anchor_from": "top_left",
-        "anchor_to": "top_left",
-        "offset": [
-         115,
-         151
-        ],
-        "collection_index": 14,
-        "bindings": [
-         {
-          "binding_name": "#form_button_text",
-          "binding_type": "collection",
-          "binding_collection_name": "form_buttons"
-         }
-        ]
-       }
-      },
-      {
-       "card_icon6": {
-        "type": "image",
-        "size": [
-         9,
-         9
-        ],
-        "collection_index": 14,
-        "layer": 6,
-        "anchor_from": "top_left",
-        "anchor_to": "top_left",
-        "offset": [
-         176,
-         151
-        ],
-        "bindings": [
-         {
-          "binding_name": "#form_button_texture",
-          "binding_name_override": "#texture",
-          "binding_type": "collection",
-          "binding_collection_name": "form_buttons"
-         },
-         {
-          "binding_name": "#form_button_texture_file_system",
-          "binding_name_override": "#texture_file_system",
-          "binding_type": "collection",
-          "binding_collection_name": "form_buttons"
-         }
-        ]
-       }
-      },
-      {
-       "upgrade6": {
-        "type": "button",
-        "size": [
-         33,
-         10
-        ],
-        "collection_index": 6,
-        "anchor_from": "top_left",
-        "anchor_to": "top_left",
-        "offset": [
-         152,
-         186
-        ],
-        "default_control": "default",
-        "hover_control": "hover",
-        "pressed_control": "pressed",
-        "sound_name": "random.click",
-        "focus_enabled": true,
-        "button_mappings": [
-         {
-          "from_button_id": "button.menu_select",
-          "to_button_id": "button.form_button_click",
-          "mapping_type": "pressed"
-         },
-         {
-          "from_button_id": "button.menu_ok",
-          "to_button_id": "button.form_button_click",
-          "mapping_type": "focused"
-         }
-        ],
-        "bindings": [
-         {
-          "binding_type": "collection_details",
-          "binding_collection_name": "form_buttons"
-         }
-        ],
-        "controls": [
-         {
-          "default": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/btn_upg"
-          }
-         },
-         {
-          "hover": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/btn_upg_hover"
-          }
-         },
-         {
-          "pressed": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/btn_upg_hover"
-          }
-         },
-         {
-          "text": {
-           "type": "label",
-           "layer": 2,
-           "size": [
-            "100% - 4px",
-            "default"
-           ],
-           "font_scale_factor": 0.5,
-           "text_alignment": "center",
-           "anchor_from": "center",
-           "anchor_to": "center",
-           "text": "UPGRADE"
-          }
-         }
-        ]
-       }
-      },
-      {
-       "card_text7": {
-        "type": "label",
-        "text": "#form_button_text",
-        "layer": 6,
-        "size": [
-         60,
-         "default"
-        ],
-        "font_scale_factor": 0.5,
-        "text_alignment": "left",
-        "anchor_from": "top_left",
-        "anchor_to": "top_left",
-        "offset": [
-         193,
-         151
-        ],
-        "collection_index": 15,
-        "bindings": [
-         {
-          "binding_name": "#form_button_text",
-          "binding_type": "collection",
-          "binding_collection_name": "form_buttons"
-         }
-        ]
-       }
-      },
-      {
-       "card_icon7": {
-        "type": "image",
-        "size": [
-         9,
-         9
-        ],
-        "collection_index": 15,
-        "layer": 6,
-        "anchor_from": "top_left",
-        "anchor_to": "top_left",
-        "offset": [
-         254,
-         151
-        ],
-        "bindings": [
-         {
-          "binding_name": "#form_button_texture",
-          "binding_name_override": "#texture",
-          "binding_type": "collection",
-          "binding_collection_name": "form_buttons"
-         },
-         {
-          "binding_name": "#form_button_texture_file_system",
-          "binding_name_override": "#texture_file_system",
-          "binding_type": "collection",
-          "binding_collection_name": "form_buttons"
-         }
-        ]
-       }
-      },
-      {
-       "upgrade7": {
-        "type": "button",
-        "size": [
-         33,
-         10
-        ],
-        "collection_index": 7,
-        "anchor_from": "top_left",
-        "anchor_to": "top_left",
-        "offset": [
-         230,
-         186
+         306,
+         164
         ],
         "default_control": "default",
         "hover_control": "hover",
@@ -1604,10 +1308,10 @@
        "tab0": {
         "type": "button",
         "size": [
-         66,
+         110,
          16
         ],
-        "collection_index": 20,
+        "collection_index": 16,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
@@ -1678,14 +1382,14 @@
        "tab1": {
         "type": "button",
         "size": [
-         66,
+         110,
          16
         ],
-        "collection_index": 21,
+        "collection_index": 17,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         74,
+         118,
          207
         ],
         "default_control": "default",
@@ -1752,14 +1456,14 @@
        "tab2": {
         "type": "button",
         "size": [
-         66,
+         110,
          16
         ],
-        "collection_index": 22,
+        "collection_index": 18,
         "anchor_from": "top_left",
         "anchor_to": "top_left",
         "offset": [
-         142,
+         230,
          207
         ],
         "default_control": "default",
@@ -1817,154 +1521,6 @@
            "anchor_from": "center",
            "anchor_to": "center",
            "text": "Raid Log"
-          }
-         }
-        ]
-       }
-      },
-      {
-       "tab3": {
-        "type": "button",
-        "size": [
-         66,
-         16
-        ],
-        "collection_index": 23,
-        "anchor_from": "top_left",
-        "anchor_to": "top_left",
-        "offset": [
-         210,
-         207
-        ],
-        "default_control": "default",
-        "hover_control": "hover",
-        "pressed_control": "pressed",
-        "sound_name": "random.click",
-        "focus_enabled": true,
-        "button_mappings": [
-         {
-          "from_button_id": "button.menu_select",
-          "to_button_id": "button.form_button_click",
-          "mapping_type": "pressed"
-         },
-         {
-          "from_button_id": "button.menu_ok",
-          "to_button_id": "button.form_button_click",
-          "mapping_type": "focused"
-         }
-        ],
-        "bindings": [
-         {
-          "binding_type": "collection_details",
-          "binding_collection_name": "form_buttons"
-         }
-        ],
-        "controls": [
-         {
-          "default": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/tab"
-          }
-         },
-         {
-          "hover": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/tab_hover"
-          }
-         },
-         {
-          "pressed": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/tab_hover"
-          }
-         },
-         {
-          "text": {
-           "type": "label",
-           "layer": 2,
-           "size": [
-            "100% - 4px",
-            "default"
-           ],
-           "font_scale_factor": 0.6,
-           "text_alignment": "center",
-           "anchor_from": "center",
-           "anchor_to": "center",
-           "text": "Insurance"
-          }
-         }
-        ]
-       }
-      },
-      {
-       "tab4": {
-        "type": "button",
-        "size": [
-         66,
-         16
-        ],
-        "collection_index": 24,
-        "anchor_from": "top_left",
-        "anchor_to": "top_left",
-        "offset": [
-         278,
-         207
-        ],
-        "default_control": "default",
-        "hover_control": "hover",
-        "pressed_control": "pressed",
-        "sound_name": "random.click",
-        "focus_enabled": true,
-        "button_mappings": [
-         {
-          "from_button_id": "button.menu_select",
-          "to_button_id": "button.form_button_click",
-          "mapping_type": "pressed"
-         },
-         {
-          "from_button_id": "button.menu_ok",
-          "to_button_id": "button.form_button_click",
-          "mapping_type": "focused"
-         }
-        ],
-        "bindings": [
-         {
-          "binding_type": "collection_details",
-          "binding_collection_name": "form_buttons"
-         }
-        ],
-        "controls": [
-         {
-          "default": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/tab"
-          }
-         },
-         {
-          "hover": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/tab_hover"
-          }
-         },
-         {
-          "pressed": {
-           "type": "image",
-           "texture": "textures/ui/skyclans/tab_hover"
-          }
-         },
-         {
-          "text": {
-           "type": "label",
-           "layer": 2,
-           "size": [
-            "100% - 4px",
-            "default"
-           ],
-           "font_scale_factor": 0.6,
-           "text_alignment": "center",
-           "anchor_from": "center",
-           "anchor_to": "center",
-           "text": "Settings"
           }
          }
         ]

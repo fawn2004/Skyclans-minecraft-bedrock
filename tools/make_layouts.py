@@ -180,14 +180,18 @@ write("sc_raid.json", f"// Raid Dispatch screen. Title marker \"{RAID_MARK}\". G
 
 # ------------------------------------------------------------------ Core Terminal
 # Button numbers (keep in sync with SkyClans_BP/scripts/menus/coreMenu.js):
-#  0-7   UPGRADE buttons on the 8 module cards (pressable, fixed look)
-#  8-15  module cards (text-only): picture = icon, text = "Name 0/3\npips\ndescription\nprice"
-#  16    clan bank text (header, right)     17  shield chip text
-#  18    "ISLAND CORE - LEVEL 1" (left panel title)
-#  19    DEPOSIT TO BANK (pressable)
-#  20-24 tabs: Modules, Upkeep, Raid Log, Insurance, Settings (pressable, fixed text)
+#  0-5   UPGRADE buttons on the 6 module cards (pressable, fixed look)
+#  6-11  module cards (text-only): picture = icon, text = "Name 0/3\npips\ndescription\nprice"
+#  12    clan bank text (header, right)     13  shield chip text
+#  14    "ISLAND CORE - LEVEL 1" (left panel title)
+#  15    DEPOSIT TO BANK (pressable)
+#  16-18 tabs: Modules, Upkeep, Raid Log (pressable, fixed text)
 #  body  -> upkeep lines in the left panel;  title (after marker) -> clan line in the header
 CORE_MARK = "§s§c§9"
+MODULES = 6
+TABS = ["Modules", "Upkeep", "Raid Log"]
+CARD0, BANK = MODULES, MODULES * 2
+SHIELD, CORE_TITLE, DEPOSIT, TAB0 = BANK + 1, BANK + 2, BANK + 3, BANK + 4
 core_controls = [
     {"header": image("list_tile", 6, 6, 320, 20, [
         {"icon": image("core_small", 5, 4, 12, 12)},
@@ -204,24 +208,24 @@ core_controls = [
 upkeep = label("#form_text", 11, 104, 0.55, 90, color=[0.85, 0.88, 0.93], layer=6)
 upkeep["bindings"] = [{"binding_name": "#form_text"}]
 core_buttons = [
-    {"bank_text": data_label(16, 150, 13, 0.7, 114, "right")},
-    {"shield_text": data_label(17, 268, 13, 0.5, 54, "center")},
-    {"core_title": data_label(18, 6, 35, 0.5, 100, "center")},
+    {"bank_text": data_label(BANK, 150, 13, 0.7, 114, "right")},
+    {"shield_text": data_label(SHIELD, 268, 13, 0.5, 54, "center")},
+    {"core_title": data_label(CORE_TITLE, 6, 35, 0.5, 100, "center")},
     {"upkeep": upkeep},
-    {"deposit": button(19, 12, 182, 88, 16, 0.6, shadow=False)},
+    {"deposit": button(DEPOSIT, 12, 182, 88, 16, 0.6, shadow=False)},
 ]
-for i in range(8):
+for i in range(MODULES):
     col, row = i % 3, i // 3
-    x, y = 112 + col * 78, 42 + row * 53
-    core_controls.append({f"card{i}": image("list_tile", x, y, 76, 51)})
+    x, y = 112 + col * 78, 42 + row * 70  # 2 rows of 3, taller cards
+    core_controls.append({f"card{i}": image("list_tile", x, y, 76, 66)})
     core_buttons += [
-        {f"card_text{i}": data_label(8 + i, x + 3, y + 3, 0.5, 60)},
-        {f"card_icon{i}": data_image(8 + i, x + 64, y + 3, 9, 9)},
-        {f"upgrade{i}": button(i, x + 40, y + 38, 33, 10, 0.5, art_from_form=False, default_tex="btn_upg",
+        {f"card_text{i}": data_label(CARD0 + i, x + 3, y + 4, 0.55, 60)},
+        {f"card_icon{i}": data_image(CARD0 + i, x + 63, y + 3, 10, 10)},
+        {f"upgrade{i}": button(i, x + 38, y + 52, 35, 11, 0.5, art_from_form=False, default_tex="btn_upg",
                                hover_tex="btn_upg_hover", shadow=False, fixed_text="UPGRADE")},
     ]
-for k, name in enumerate(["Modules", "Upkeep", "Raid Log", "Insurance", "Settings"]):
-    core_buttons.append({f"tab{k}": button(20 + k, 6 + k * 68, 207, 66, 16, 0.6, art_from_form=False,
+for k, name in enumerate(TABS):
+    core_buttons.append({f"tab{k}": button(TAB0 + k, 6 + k * 112, 207, 110, 16, 0.6, art_from_form=False,
                                            default_tex="tab_on" if k == 0 else "tab", hover_tex="tab_hover",
                                            shadow=False, fixed_text=name)})
 core_screen = screen("shop_window", core_controls, core_buttons, back_index=None)
