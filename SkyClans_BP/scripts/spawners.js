@@ -3,6 +3,7 @@ import { ItemStack, system, world } from "@minecraft/server";
 import { SPAWNERS, SPAWNER_SETTINGS as S } from "./spawnerConfig.js";
 import { NAV, SCREEN, fail, show, success } from "./forms.js";
 import { canBuild } from "./islands.js";
+import { clanOf, plotAt } from "./clans.js";
 
 // ============================================================================
 //  SPAWNERS
@@ -182,6 +183,32 @@ function depositHeads(player, mob) {
 }
 
 // ---- placing & stacking ------------------------------------------------------
+// ---- spawner cap: each clan's island holds SPAWNER_CAP spawners (stacked ones count one each) ----
+export const SPAWNER_CAP = 10; // (Spawner Cap upgrades in the Island Core will raise this)
+export const spawnerCap = (clan) => SPAWNER_CAP;
+
+/** Spawners on a clan's island, counting every spawner in each stack. */
+export function clanSpawnerCount(clan) {
+  let n = 0;
+  for (const d of spawners.values()) {
+    if (d.dim === "minecraft:overworld" && plotAt(d.x, d.z)?.id === clan.id) n += d.stack;
+  }
+  return n;
+}
+
+/** How many more spawners can go on the island the player is building on (Infinity for admins). */
+function capRoom(player, loc) {
+  if (isAdmin(player)) return Infinity;
+  const clan = clanOf(player);
+  if (!clan || player.dimension.id !== "minecraft:overworld" || plotAt(loc.x, loc.z)?.id !== clan.id) return -1; // not their island
+  return spawnerCap(clan) - clanSpawnerCount(clan);
+}
+
+const capFull = (player) => {
+  const clan = clanOf(player);
+  return fail(player, `Your island is at its spawner cap (${spawnerCap(clan)}). Upgrade Spawner Cap in your Island Core.`);
+};
+
 function placeSpawner(player, block, face, info) {
   const target = REPLACEABLE.has(block.typeId) ? block : block.offset(FACE[face] ?? FACE.Up);
   if (!target || !REPLACEABLE.has(target.typeId)) return;
@@ -191,6 +218,9 @@ function placeSpawner(player, block, face, info) {
 
   const loc = target.location;
   if (!canBuild(player, player.dimension.id, loc)) return fail(player, "You can only place spawners on your own island.");
+  const room = capRoom(player, loc);
+  if (room < 0) return fail(player, "Spawners can only go on your own clan's island.");
+  if (room < 1) return capFull(player);
   try {
     world.structureManager.place(STRUCTURE(info.mob), player.dimension, loc);
   } catch {
@@ -211,8 +241,10 @@ function addToStack(player, key, info, all) {
   if (info.level !== d.level) return fail(player, `Only level ${d.level} ${mobName(d.mob)} spawners can stack onto this one.`);
   const room = S.maxStack - d.stack;
   if (room <= 0) return fail(player, `This spawner is full (${S.maxStack} max).`);
+  const cap = capRoom(player, d);
+  if (cap < 1) return capFull(player);
   const held = container(player)?.getItem(player.selectedSlotIndex);
-  const n = Math.min(room, all ? held?.amount ?? 1 : 1);
+  const n = Math.min(room, cap, all ? held?.amount ?? 1 : 1);
   d.stack += n;
   save(key, d);
   takeFromHand(player, n);
@@ -225,11 +257,14 @@ function addFromInventory(player, key) {
   const inv = container(player);
   if (!d || !inv) return 0;
   let added = 0;
-  for (let i = 0; i < inv.size && d.stack < S.maxStack; i++) {
+  let cap = capRoom(player, d);
+  if (cap < 1) return 0;
+  for (let i = 0; i < inv.size && d.stack < S.maxStack && cap > 0; i++) {
     const it = inv.getItem(i);
     const info = spawnerFromItem(it);
     if (!info || info.mob !== d.mob || info.level !== d.level) continue;
-    const n = Math.min(S.maxStack - d.stack, it.amount);
+    const n = Math.min(S.maxStack - d.stack, it.amount, cap);
+    cap -= n;
     d.stack += n;
     added += n;
     if (it.amount > n) {
@@ -326,7 +361,7 @@ export async function spawnerMenu(player, key, msg) {
       icon: "textures/blocks/mob_spawner",
       go: () => {
         const n = addFromInventory(player, key);
-        if (!n) return reopen(`§cNo level ${d.level} ${name}\n§cspawners in your inventory\n§c(or it's full).`);
+        if (!n) return reopen(`§cNothing added: no level ${d.level}\n§c${name} spawners in your bag,\n§cthe stack is full, or your\n§cisland hit its spawner cap.`);
         success(player, `Added ${n} spawners - now x${spawners.get(key)?.stack}.`);
         return reopen(`§aAdded §f${n} §aspawners.`);
       },

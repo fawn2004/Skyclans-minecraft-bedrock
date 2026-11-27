@@ -2,6 +2,7 @@ import { ActionFormData } from "@minecraft/server-ui";
 import { SCREEN, comingSoon, show } from "../forms.js";
 import { clanOf } from "../clans.js";
 import { fmt } from "../money.js";
+import { clanSpawnerCount, spawnerCap } from "../spawners.js";
 
 // ============================================================================
 //  CORE TERMINAL - opened by tapping your Island Core.
@@ -16,7 +17,7 @@ const MODULES = [
   { name: "Island Size", max: 3, desc: "Border 100 x 100", price: 250000, icon: ICON + "icon_expand" },
   { name: "Sell Multiplier", max: 8, desc: "Sell prices x1.00", price: 200000, icon: ICON + "coin" },
   { name: "Island Fly", max: 1, desc: "Fly anywhere on your island", price: 250000, icon: "textures/items/feather" },
-  { name: "Spawner Cap", max: 8, desc: "Up to 10 spawners", price: 200000, icon: "textures/blocks/mob_spawner" },
+  { name: "Spawner Cap", max: 8, desc: (clan) => `${clanSpawnerCount(clan)} / ${spawnerCap(clan)} spawners`, price: 200000, icon: "textures/blocks/mob_spawner" },
   { name: "Raid Shield Length", max: 4, desc: "Immune 12h after a raid", price: 100000, icon: ICON + "head_insurance" },
   { name: "Extra Raid Life", max: 2, desc: "Your raiders get 3 lives", price: 250000, icon: ICON + "icon_heart" },
 ];
@@ -47,7 +48,8 @@ export async function openCoreMenu(player, clan) {
   const form = new ActionFormData().title(`${SCREEN.core}Clan ${clan.name}`).body(body);
   for (let i = 0; i < N; i++) form.button(""); // upgrade buttons (look fixed in the layout)
   for (const m of MODULES) {
-    form.button(`§f${m.name} §8${0}/${m.max}\n${pips(0, m.max)}\n§7${m.desc}\n§e${fmt(m.price)}`, m.icon); // cards
+    const desc = typeof m.desc === "function" ? m.desc(clan) : m.desc;
+    form.button(`§f${m.name} §8${0}/${m.max}\n${pips(0, m.max)}\n§7${desc}\n§e${fmt(m.price)}`, m.icon); // cards
   }
   form.button(`§fClan bank §e${fmt(clan.bank)}`); // bank
   form.button("§a§lSHIELD ONLINE"); // shield chip (placeholder until shields exist)
