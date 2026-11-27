@@ -3,10 +3,11 @@
 Run from the repo root:  python3 tools/make_core_model.py
 Writes:
   SkyClans_RP/models/entity/island_core.geo.json   - the model (cubes, in bones that animate)
-  SkyClans_RP/textures/entity/island_core.png      - a tiny palette: one pixel per colour
+  SkyClans_RP/textures/entity/island_core.png      - 64x64 sheet of painted 16x16 material tiles
 
-Every cube face points at its colour's pixel in the palette. Glowing colours get a
-low alpha, which the entity_emissive material draws at full brightness.
+Every cube face maps onto its material's tile (obsidian, rune band, crystal, lava...).
+The whole core is drawn at full brightness (render controller ignore_lighting), so it
+glows at night; the entity is scaled to 70% in its behaviour file.
 Units: 16 = one block. Bones:
   cage                   - base, pillars, pillar-top crystals (still)
   ring_a_tilt > ring_a   - outer purple ring (tilted, spins)
@@ -79,20 +80,126 @@ BONES = [
     ("core", "core_bob", [0, 24, 0], None, core),
 ]
 
-# ---- palette texture -------------------------------------------------------------
-palette = {}
-for _, _, _, _, cubes in BONES:
-    for c in cubes:
-        palette.setdefault((c["c"], round(c["e"], 2)), len(palette))
-SIZE = 16
-assert len(palette) <= SIZE * SIZE
+# ---- texture: one painted 16x16 tile per material, in a 64x64 sheet -----------------------
+import random
+
+TILE = 16
+SIZE = 64
+rng = random.Random(7)  # fixed seed = same texture every run
+
+
+def hexrgb(h):
+    return tuple(int(h[k : k + 2], 16) for k in (1, 3, 5))
+
+
+def shade(rgb, f):
+    return tuple(max(0, min(255, int(v * f))) for v in rgb)
+
+
+def mix(a, b, t):
+    return tuple(int(a[k] + (b[k] - a[k]) * t) for k in range(3))
+
+
+def paint_obsidian(px, base, light):
+    for y in range(TILE):
+        for x in range(TILE):
+            r = rng.random()
+            c = base
+            if r < 0.18:
+                c = shade(base, 0.7)
+            elif r < 0.30:
+                c = light
+            elif r < 0.33:
+                c = (74, 42, 122)  # purple fleck
+            px[x, y] = c + (255,)
+    # a couple of crying-obsidian streaks
+    for _ in range(2):
+        x = rng.randrange(TILE)
+        for y in range(rng.randrange(TILE - 5), TILE):
+            if rng.random() < 0.6:
+                px[x, y] = (110, 60, 190, 255)
+
+
+def paint_slab(px, base):
+    for y in range(TILE):
+        for x in range(TILE):
+            c = base
+            if x in (0, TILE - 1) or y in (0, TILE - 1):
+                c = shade(base, 0.65)
+            elif x == 1 or y == 1:
+                c = shade(base, 1.35)
+            elif rng.random() < 0.15:
+                c = shade(base, 0.85)
+            px[x, y] = c + (255,)
+
+
+def paint_band(px, base):
+    hi, lo, rune = shade(base, 1.35), shade(base, 0.6), (225, 200, 255)
+    for y in range(TILE):
+        for x in range(TILE):
+            c = hi if y < 3 else lo if y > 12 else base
+            if 4 <= y <= 11 and rng.random() < 0.08:
+                c = shade(base, 1.15)
+            px[x, y] = c + (255,)
+    # carved runes
+    for rx in (2, 7, 12):
+        pattern = rng.choice([[(0, 0), (0, 1), (0, 2), (1, 1)], [(0, 0), (1, 1), (2, 2), (0, 2)], [(1, 0), (0, 1), (2, 1), (1, 2)]])
+        for dx, dy in pattern:
+            if rx + dx < TILE:
+                px[rx + dx, 6 + dy] = rune + (255,)
+
+
+def paint_crystal(px, dark, mid, light, sparkle=(255, 255, 255)):
+    for y in range(TILE):
+        for x in range(TILE):
+            d = (x + y) / (2 * TILE - 2)  # diagonal facets
+            c = mix(light, dark, d)
+            if (x + y) % 6 == 0:
+                c = mix(c, light, 0.5)  # facet edge
+            if x in (0, TILE - 1) or y in (0, TILE - 1):
+                c = shade(dark, 0.85)
+            px[x, y] = c + (255,)
+    for _ in range(4):
+        x, y = rng.randrange(1, TILE - 1), rng.randrange(1, TILE - 1)
+        px[x, y] = sparkle + (255,)
+
+
+def paint_lava(px):
+    cols = [(150, 30, 10), (210, 70, 20), (240, 120, 30), (255, 190, 60), (255, 235, 140)]
+    for y in range(TILE):
+        for x in range(TILE):
+            v = (math.sin(x * 0.9 + y * 0.4) + math.sin(y * 1.1 - x * 0.3) + rng.random() * 0.8) / 2.8 + 0.5
+            px[x, y] = cols[max(0, min(4, int(v * 5)))] + (255,)
+
+
+def paint_glow(px, base, core):
+    for y in range(TILE):
+        for x in range(TILE):
+            d = max(abs(x - 7.5), abs(y - 7.5)) / 8
+            c = mix(core, base, d)
+            if rng.random() < 0.1:
+                c = shade(c, 1.1)
+            px[x, y] = c + (255,)
+
+
+MATERIALS = {
+    OBS: lambda px: paint_obsidian(px, hexrgb(OBS), hexrgb(OBS_L)),
+    OBS_L: lambda px: paint_slab(px, hexrgb(OBS_L)),
+    PURP: lambda px: paint_band(px, hexrgb(PURP)),
+    PURP_L: lambda px: paint_crystal(px, (110, 60, 200), hexrgb(PURP_L), (235, 215, 255)),
+    LAVA: paint_lava,
+    FIRE: lambda px: paint_crystal(px, (200, 70, 15), hexrgb(FIRE), (255, 215, 120), (255, 250, 200)),
+    FIRE_L: lambda px: paint_crystal(px, (210, 110, 20), hexrgb(FIRE_L), (255, 235, 170)),
+    HOT: lambda px: paint_glow(px, (255, 200, 90), (255, 255, 235)),
+}
+tiles = {}
 img = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 255))
-for (hexcol, glow), i in palette.items():
-    r, g, b = (int(hexcol[k : k + 2], 16) for k in (1, 3, 5))
-    # glowing pixels: low alpha = drawn fully bright by entity_emissive
-    # (never fully transparent: some tools drop the colour of alpha-0 pixels)
-    a = 255 if glow <= 0 else max(24, int(255 * (1 - glow)))
-    img.putpixel((i % SIZE, i // SIZE), (r, g, b, a))
+for n, (col, painter) in enumerate(MATERIALS.items()):
+    tile = Image.new("RGBA", (TILE, TILE))
+    painter(tile.load())
+    tx, ty = (n % (SIZE // TILE)) * TILE, (n // (SIZE // TILE)) * TILE
+    img.paste(tile, (tx, ty))
+    tiles[col] = (tx, ty)
 TEX.parent.mkdir(parents=True, exist_ok=True)
 img.save(TEX)
 
@@ -102,10 +209,15 @@ def r2(v):
 
 
 def geo_cube(c):
-    i = palette[(c["c"], round(c["e"], 2))]
-    u, v = i % SIZE, i // SIZE
-    face = {"uv": [u, v], "uv_size": [1, 1]}
-    out = {"origin": [r2(n) for n in c["o"]], "size": [r2(n) for n in c["s"]], "uv": {f: dict(face) for f in ("north", "south", "east", "west", "up", "down")}}
+    tx, ty = tiles[c["c"]]
+    w, h, d = c["s"]
+    fit = lambda a, b: [r2(max(1, min(TILE, a))), r2(max(1, min(TILE, b)))]
+    faces = {"north": (w, h), "south": (w, h), "east": (d, h), "west": (d, h), "up": (w, d), "down": (w, d)}
+    out = {
+        "origin": [r2(n) for n in c["o"]],
+        "size": [r2(n) for n in c["s"]],
+        "uv": {f: {"uv": [tx, ty], "uv_size": fit(*dims)} for f, dims in faces.items()},
+    }
     if c["r"]:
         out["rotation"] = [r2(n) for n in c["r"]]
         out["pivot"] = [r2(n) for n in (c["p"] or [c["o"][k] + c["s"][k] / 2 for k in range(3)])]
@@ -141,4 +253,4 @@ geo = {
 }
 GEO.parent.mkdir(parents=True, exist_ok=True)
 GEO.write_text(json.dumps(geo, indent=1) + "\n")
-print(f"core model: {sum(len(b.get('cubes', [])) for b in bones)} cubes, {len(palette)} colours")
+print(f"core model: {sum(len(b.get('cubes', [])) for b in bones)} cubes, {len(tiles)} materials")
