@@ -180,7 +180,7 @@ write("sc_raid.json", f"// Raid Dispatch screen. Title marker \"{RAID_MARK}\". G
 
 # ------------------------------------------------------------------ Core Terminal
 # Button numbers (keep in sync with SkyClans_BP/scripts/menus/coreMenu.js):
-#  0-5   UPGRADE buttons on the 6 module cards (pressable, fixed look)
+#  0-5   UPGRADE buttons on the 6 module cards (pressable, fixed look; hidden when the button text is empty = maxed)
 #  6-11  module cards (text-only): picture = icon, text = "Name 0/3\npips\ndescription\nprice"
 #  12    clan bank text (header, right)     13  shield chip text
 #  14    "ISLAND CORE - LEVEL 1" (left panel title)
@@ -218,11 +218,17 @@ for i in range(MODULES):
     col, row = i % 3, i // 3
     x, y = 112 + col * 78, 42 + row * 70  # 2 rows of 3, taller cards
     core_controls.append({f"card{i}": image("list_tile", x, y, 76, 66)})
+    upg = button(i, x + 38, y + 52, 35, 11, 0.5, art_from_form=False, default_tex="btn_upg",
+                 hover_tex="btn_upg_hover", shadow=False, fixed_text="UPGRADE")
+    # the script sends an empty button for a maxed module: hide it
+    upg["bindings"] += [
+        {"binding_name": "#form_button_text", **COLL},
+        {"binding_type": "view", "source_property_name": "(not (#form_button_text = ''))", "target_property_name": "#visible"},
+    ]
     core_buttons += [
         {f"card_text{i}": data_label(CARD0 + i, x + 3, y + 4, 0.55, 60)},
         {f"card_icon{i}": data_image(CARD0 + i, x + 63, y + 3, 10, 10)},
-        {f"upgrade{i}": button(i, x + 38, y + 52, 35, 11, 0.5, art_from_form=False, default_tex="btn_upg",
-                               hover_tex="btn_upg_hover", shadow=False, fixed_text="UPGRADE")},
+        {f"upgrade{i}": upg},
     ]
 for k, name in enumerate(TABS):
     core_buttons.append({f"tab{k}": button(TAB0 + k, 6 + k * 112, 207, 110, 16, 0.6, art_from_form=False,

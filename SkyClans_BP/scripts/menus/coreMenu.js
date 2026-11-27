@@ -61,7 +61,8 @@ export async function openCoreMenu(player, clan) {
   clan = mine; // fresh copy
 
   const form = new ActionFormData().title(`${SCREEN.core}Clan ${clan.name}`).body(upkeepLines(clan));
-  for (let i = 0; i < N; i++) form.button(""); // upgrade buttons (look fixed in the layout)
+  // upgrade buttons: look fixed in the layout; empty text = maxed = button hidden
+  for (const m of MODULES) form.button(levelOf(clan, m.id) >= m.prices.length ? "" : "upgrade");
   for (const m of MODULES) form.button(cardText(clan, m), m.icon); // cards
   form.button(`§fClan bank §e${fmt(clan.bank)}`); // bank
   form.button(upkeepPaid(clan) ? "§a§lUPKEEP PAID" : "§c§lUPKEEP UNPAID"); // status chip

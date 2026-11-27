@@ -5,7 +5,7 @@ Clans add-on for Minecraft Bedrock skyblock. Built one menu at a time: each menu
 ## Install
 Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on both packs (behaviour + resources) in the world. Beta APIs are **not** needed.
 
-## What works so far (v0.15.0)
+## What works so far (v0.15.1)
 - **SkyClans Menu** item, given once to each new player (with the starting money), or `/give @s skyclans:menu`.
 - **Main menu:** real wallet in the stat chip; Spawn button teleports to the spawn point (0 0 0 until set in /admin). Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home teleports to your island (or opens Create clan).
 - **Clans & islands:** up to 5 players (Owner / Co-owner / Member). `/is create <name>` builds a starter island (dirt, tree, starter chest) on a 100x100 plot. Plot centres go diagonally from 10000/10000 every 700 blocks (10700/10700, 11400/11400 ...), so even 300x300 islands have a 400 block gap. A barrier wall surrounds each plot from Y -64 to 320. Only your clan can build, break or open things on your plot; spawn is protected in a 1000x1000 area (500 each way) where only players in creative can build or break. Explosions only break blocks in their own plot. Clan bank (deposit: everyone, withdraw: owner/co). Members screen shows real members with Kick / Leave / Disband and Promote / Demote. Clans are in `SkyClans_BP/scripts/clans.js`, islands and protection in `islands.js`.
