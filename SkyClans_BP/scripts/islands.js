@@ -1,5 +1,5 @@
 import { BlockTypes, BlockVolume, ItemStack, system, world } from "@minecraft/server";
-import { ISLAND, clanById, clanOf, inIslandZone, markIslandBuilt, plotAt } from "./clans.js";
+import { ISLAND, clanById, clanOf, inIslandZone, markIslandBuilt, plotAt, saveClan } from "./clans.js";
 import { getSpawn } from "./serverSettings.js";
 import { queueWalls } from "./islandUpgrades.js";
 import { isAdmin } from "./spawners.js";
@@ -157,6 +157,11 @@ export async function buildIsland(player, clan) {
 }
 
 export function teleportHome(player, clan) {
+  // the core stands in the centre now: an old default home right on the centre moves in front of it
+  if (clan.island.home.x === clan.island.cx && clan.island.home.z === clan.island.cz) {
+    clan.island.home = { ...clan.island.home, z: clan.island.cz + 3 };
+    saveClan(clan);
+  }
   const h = clan.island.home;
   player.teleport({ x: h.x + 0.5, y: h.y, z: h.z + 0.5 }, { dimension: overworld() });
   player.sendMessage(`§b[SkyClans] §7Welcome home to §f${clan.name}§7.`);
@@ -169,7 +174,8 @@ export function teleportHome(player, clan) {
 // Tapping it opens the Core Terminal (menus/coreMenu.js).
 export const CORE_ID = "skyclans:island_core";
 const CORE_TAG = "skyclans_core";
-export const corePos = (clan) => ({ x: clan.island.cx + 0.5, y: ISLAND.y + 1, z: clan.island.cz - 2.5 });
+// the exact centre of the island, standing on the grass
+export const corePos = (clan) => ({ x: clan.island.cx + 0.5, y: ISLAND.y + 1, z: clan.island.cz + 0.5 });
 
 /** Spawns the clan's core if it isn't there. Only works while the island area is loaded. */
 export function ensureCore(clan) {
@@ -180,6 +186,9 @@ export function ensureCore(clan) {
     const there = dim.getEntities({ type: CORE_ID, location: pos, maxDistance: 6 });
     if (there.length) {
       for (const e of there.slice(1)) e.remove(); // never more than one
+      // cores placed before v0.16.1 stood just off the centre: move them to the middle
+      const l = there[0].location;
+      if (Math.abs(l.x - pos.x) > 0.3 || Math.abs(l.z - pos.z) > 0.3) there[0].teleport(pos);
       return;
     }
     const core = dim.spawnEntity(CORE_ID, pos);

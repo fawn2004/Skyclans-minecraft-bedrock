@@ -135,7 +135,7 @@ export function createClan(player, name) {
     created: Date.now(),
     bank: 0,
     members: { [player.id]: { name: player.name, rank: "owner", joined: Date.now() } },
-    island: { index, cx: centre, cz: centre, size: ISLAND.size, built: false, home: { x: centre, y: ISLAND.y + 1, z: centre } },
+    island: { index, cx: centre, cz: centre, size: ISLAND.size, built: false, home: { x: centre, y: ISLAND.y + 1, z: centre + 3 } }, // in front of the core
   };
   save(clan);
   player.setDynamicProperty("skyclans:clan", id);
