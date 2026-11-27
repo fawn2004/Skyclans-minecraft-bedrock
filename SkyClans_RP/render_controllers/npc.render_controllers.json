@@ -1,0 +1,40 @@
+{
+  "format_version": "1.8.0",
+  "render_controllers": {
+    "controller.render.skyclans.npc": {
+      "arrays": {
+        "geometries": {
+          "Array.geos": [
+            "Geometry.spawner",
+            "Geometry.kits",
+            "Geometry.ores",
+            "Geometry.farming",
+            "Geometry.blocks",
+            "Geometry.redstone",
+            "Geometry.food"
+          ]
+        },
+        "textures": {
+          "Array.skins": [
+            "Texture.spawner",
+            "Texture.kits",
+            "Texture.ores",
+            "Texture.farming",
+            "Texture.blocks",
+            "Texture.redstone",
+            "Texture.food"
+          ]
+        }
+      },
+      "geometry": "Array.geos[query.variant]",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Array.skins[query.variant]"
+      ]
+    }
+  }
+}

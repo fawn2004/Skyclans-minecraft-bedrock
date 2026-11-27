@@ -1,0 +1,40 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "skyclans:npc",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "spawner": "textures/entity/npc_spawner",
+        "kits": "textures/entity/npc_kits",
+        "ores": "textures/entity/npc_ores",
+        "farming": "textures/entity/npc_farming",
+        "blocks": "textures/entity/npc_blocks",
+        "redstone": "textures/entity/npc_redstone",
+        "food": "textures/entity/npc_food"
+      },
+      "geometry": {
+        "spawner": "geometry.skyclans.npc_spawner",
+        "kits": "geometry.skyclans.npc_kits",
+        "ores": "geometry.skyclans.npc_ores",
+        "farming": "geometry.skyclans.npc_farming",
+        "blocks": "geometry.skyclans.npc_blocks",
+        "redstone": "geometry.skyclans.npc_redstone",
+        "food": "geometry.skyclans.npc_food"
+      },
+      "render_controllers": [
+        "controller.render.skyclans.npc"
+      ],
+      "animations": {
+        "idle": "animation.skyclans.npc.idle"
+      },
+      "scripts": {
+        "animate": [
+          "idle"
+        ]
+      }
+    }
+  }
+}

@@ -12,6 +12,7 @@ import { getSpawn, setSpawnHere } from "./serverSettings.js";
 import { RANKS, clanOf, invite, membersOf, onlineMembers, promote, demote, setHome, transfer, deposit, withdraw } from "./clans.js";
 import { goHome } from "./islands.js";
 import { openCoreMenu } from "./menus/coreMenu.js";
+import { NPC_TYPES, removeNearestNpc, spawnNpc } from "./npcs.js";
 import { bankMenu, clanSetupMenu, confirmKick, confirmLeaveOrDisband, createClanForm, joinByName, openMembersMenu, tellClan } from "./menus/membersMenu.js";
 
 // ============================================================================
@@ -22,7 +23,7 @@ import { bankMenu, clanSetupMenu, confirmKick, confirmLeaveOrDisband, createClan
 //                 info|members|bank|deposit|withdraw|disband> [name]
 //            /deposit <amount>  /withdraw <amount>   (clan bank)
 //  Admins (players with the "admin" tag - /tag <name> add admin):
-//            /admin /eco /givekey /setspawn /broadcast
+//            /admin /eco /givekey /setspawn /broadcast /npc <type|remove>
 //  Typed without the "skyclans:" part, e.g. /spawn. Cheats don't need to be on.
 // ============================================================================
 
@@ -184,6 +185,21 @@ export function registerCommands() {
         { name: "skyclans:crate", type: P.Enum },
       ],
       [{ name: "amount", type: P.Integer }]
+    );
+    reg.registerEnum("skyclans:npctype", [...Object.keys(NPC_TYPES), "remove"]);
+    cmd(
+      "npc",
+      "Place a shop NPC where you stand, or remove the nearest (admin tag)",
+      adminOnly((p, type) => {
+        if (!p) return;
+        if (type === "remove") {
+          const gone = removeNearestNpc(p);
+          return p.sendMessage(gone ? `§a✔ Removed the ${gone} NPC.` : "§cNo shop NPC within 4 blocks.");
+        }
+        spawnNpc(p, type);
+        p.sendMessage(`§a✔ Placed the ${type} NPC. §7Step back - it faces the way you were looking.`);
+      }),
+      [{ name: "skyclans:npctype", type: P.Enum }]
     );
     cmd(
       "setspawn",

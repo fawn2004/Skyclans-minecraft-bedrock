@@ -11,6 +11,7 @@ import { loadClans } from "./clans.js";
 import { CORE_ID, clanOfCore, registerIslands } from "./islands.js";
 import { openCoreMenu } from "./menus/coreMenu.js";
 import { registerIslandUpgrades } from "./islandUpgrades.js";
+import { registerNpcs } from "./npcs.js";
 
 registerSpawners();
 registerSidebar();
@@ -18,6 +19,7 @@ registerPlayerSettings();
 registerCommands(); // all the /commands are in commands.js
 registerIslands(); // island protection
 registerIslandUpgrades(); // core upgrades, upkeep, island fly, border moves
+registerNpcs(); // shop NPCs
 world.afterEvents.worldLoad.subscribe(() => loadClans());
 
 const MENU_ITEM = "skyclans:menu";

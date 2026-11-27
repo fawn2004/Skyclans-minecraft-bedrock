@@ -5,7 +5,7 @@ Clans add-on for Minecraft Bedrock skyblock. Built one menu at a time: each menu
 ## Install
 Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on both packs (behaviour + resources) in the world. Beta APIs are **not** needed.
 
-## What works so far (v0.16.1)
+## What works so far (v0.17.0)
 - **SkyClans Menu** item, given once to each new player (with the starting money), or `/give @s skyclans:menu`.
 - **Main menu:** real wallet in the stat chip; Spawn button teleports to the spawn point (0 0 0 until set in /admin). Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home teleports to your island (or opens Create clan).
 - **Clans & islands:** up to 5 players (Owner / Co-owner / Member). `/is create <name>` builds a starter island (dirt, tree, starter chest) on a 150x150 plot (fixed size). Plot centres go diagonally from 10000/10000 every 700 blocks (10700/10700, 11400/11400 ...), so islands have a 550 block gap. A barrier wall surrounds each plot from Y -64 to 319, built in slices in the background. Only your clan can build, break or open things on your plot; spawn is protected in a 1000x1000 area (500 each way) where only players in creative can build or break. Explosions only break blocks in their own plot. Clan bank (deposit: everyone, withdraw: owner/co). Members screen shows real members with Kick / Leave / Disband and Promote / Demote. Clans are in `SkyClans_BP/scripts/clans.js`, islands and protection in `islands.js`.
@@ -18,8 +18,9 @@ Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on 
 - **Crates:** Common, Rare and Legendary keys. Use a key -> crate menu (prizes and chances) -> Open key -> a reel spins and stops on the prize (money, items, keys, spawners or kits). Prizes are in `SkyClans_BP/scripts/crates.js`.
 - **Settings (per player):** Chunk Borders, Full Bright, Coordinates work; Raid Alert Sound is saved for when raids exist.
 - **Sidebar:** each player's own panel on the right: balance, spawners, heads, players online.
+- **Shop NPCs:** 7 custom characters - Spawner, Kit, Ore, Farming, Block, Redstone and Food Shop - with floating names. Tap one to open its shop category. They can't be hurt or pushed. Admins place them with `/npc <spawner|kits|ores|farming|blocks|redstone|food>` (where you stand, facing the way you look) and remove the nearest with `/npc remove`. Models: `tools/make_npcs.py`.
 - **Commands (everyone):** `/spawn` `/menu` `/shop` `/sell hand|all` `/bal` `/baltop` `/pay <player> <amount>` `/kits` `/crates` `/settings` `/coords`.
-- **Admins = players with the `admin` tag** (`/tag <name> add admin`). Admin commands: `/admin` `/eco give|take|set <player> <amount>` `/givekey <player> <common|rare|legendary> [amount]` `/setspawn` `/broadcast <message>`. All commands are in `SkyClans_BP/scripts/commands.js`.
+- **Admins = players with the `admin` tag** (`/tag <name> add admin`). Admin commands: `/admin` `/eco give|take|set <player> <amount>` `/givekey <player> <common|rare|legendary> [amount]` `/setspawn` `/broadcast <message>` `/npc <type|remove>`. All commands are in `SkyClans_BP/scripts/commands.js`.
 - **`/admin`** menu: Money (give / take / set), Give Spawner, Give Kit, Give Keys, Set Spawn Here, Starting Money, Sidebar on/off, Menu Item.
 - Insurance and Raid Dispatch still show placeholder data; plot upgrades (to 300x300) and the Island Core come next.
 
@@ -32,4 +33,5 @@ Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on 
 - `tools/make_textures.py` – redraws the menu textures
 - `tools/make_layouts.py` – writes the Raid Dispatch and Core Terminal layouts (`sc_raid.json`, `sc_core.json`)
 - `tools/make_core_model.py` – writes the Island Core model and its texture
+- `tools/make_npcs.py` – writes the 7 shop NPC models and textures
 - `SkyClans_RP/ui/sc_list.json` – simple tile grid used by the Sky Shop

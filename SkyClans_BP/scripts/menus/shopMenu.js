@@ -101,6 +101,15 @@ export function openShopMenu(player) {
   return openPage(player, [SHOP], 0);
 }
 
+/** Opens one top-level category straight away (used by the shop NPCs). Back closes the menu. */
+export function openShopCategory(player, name) {
+  const cat = SHOP.children.find((c) => c.name.toLowerCase() === name.toLowerCase());
+  if (!cat) return openShopMenu(player);
+  if (cat.action === "kits") return kitsMenu(player, () => {});
+  if (isCategory(cat)) return openPage(player, [SHOP, cat], 0);
+  return openShopMenu(player);
+}
+
 /** /sell hand  or  /sell all */
 export function quickSell(player, mode) {
   const prices = sellList();
