@@ -3,10 +3,10 @@ import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 import { NAV, SCREEN, fail, show, success, tilePages } from "../forms.js";
 import { openMainMenu } from "./mainMenu.js";
 import { SPAWNERS } from "../spawnerConfig.js";
-import { BLOCKS, CONCRETE, CONCRETE_POWDER, FARMING, FOOD, LIGHTS, ORES, REDSTONE, TERRACOTTA, WOOD, WOOL } from "../shopItems.js";
+import { BLOCKS, CONCRETE, CONCRETE_POWDER, FARMING, FOOD, LIGHTS, ORES, REDSTONE, SELL, TERRACOTTA, WOOD, WOOL } from "../shopItems.js";
 import { KITS, kitsMenu } from "../kits.js";
 import { giveSpawner } from "../spawners.js";
-import { addMoney, fmt, getBalance, takeMoney } from "../money.js";
+import { addMoney, fmt, fmtExact, getBalance, takeMoney } from "../money.js";
 import { sellMultiplier } from "../islandUpgrades.js";
 
 // Sky Shop: a tree of pages drawn with the simple tile grid (resource pack ui/sc_list.json).
@@ -21,10 +21,9 @@ import { sellMultiplier } from "../islandUpgrades.js";
 //
 // id    = the item's game ID (what gets given / what can be sold)
 // price = buy price for ONE
-// sell  = sell price for one (leave it out = half the buy price, rounded down; 0 = can't sell)
+// Selling: only items on the SELL list in shopItems.js can be sold.
 
 const PER_PAGE = 9; // 9 tiles + Back / Prev / Next = 12
-const SELL_RATE = 0.5;
 const AMOUNTS = [1, 16, 64];
 const SPAWNER_AMOUNTS = [1, 4, 16];
 
@@ -69,7 +68,11 @@ const SHOP = {
 const balanceLine = (player) => `Balance §e${fmt(getBalance(player))}`;
 const isCategory = (e) => Array.isArray(e.children);
 const isItem = (e) => typeof e.price === "number";
-const sellPrice = (e) => (e.spawner ? 0 : e.sell ?? Math.floor(e.price * SELL_RATE));
+// What the shop pays: only items on the SELL list (shopItems.js)
+const SELL_MAP = new Map(Object.values(SELL).flat().map((s) => [s.id, s]));
+const sellPrice = (e) => (e.spawner ? 0 : SELL_MAP.get(e.id)?.sell ?? 0);
+/** Money with cents for small sell prices: $0.50, $2, $1.5K */
+const fmtPrice = (n) => (n < 10 && n % 1 ? "$" + n.toFixed(2) : fmt(n));
 
 function tileText(e) {
   if (isItem(e)) return `${e.name}\n§a${fmt(e.price)}${e.spawner ? "" : " §feach"}`;
@@ -161,7 +164,7 @@ function buyMenu(player, item, back) {
   const sell = sellPrice(item);
   return tilePages(player, {
     title: item.name.toUpperCase(),
-    body: balanceLine(player) + (sell ? `   §7Sells for §a${fmt(sell)} §7each` : ""),
+    body: balanceLine(player) + (sell ? `   §7Sells for §a${fmtPrice(sell)} §7each` : ""),
     tiles: amounts.map((n) => ({
       text: `Buy x${n}\n§a${fmt(item.price * n)}`,
       icon: item.icon,
@@ -206,14 +209,9 @@ function giveItems(player, id, n, max) {
 }
 
 // ---- selling -----------------------------------------------------------------------
-/** id -> { name, sell } for everything that can be sold */
+/** id -> { name, sell, icon } for everything the shop buys (the SELL list in shopItems.js) */
 function sellList() {
-  const map = new Map();
-  for (const e of allItems()) {
-    const s = sellPrice(e);
-    if (e.id && s > 0 && !map.has(e.id)) map.set(e.id, { name: e.name, sell: s, icon: e.icon });
-  }
-  return map;
+  return SELL_MAP;
 }
 
 // Only plain items sell (not renamed ones, kit gear or spawners - those have lore).
@@ -243,7 +241,7 @@ function sellHand(player, prices) {
   const earned = Math.floor(p.sell * it.amount * mult);
   inv.setItem(slot, undefined);
   addMoney(player, earned);
-  success(player, `Sold ${it.amount}x ${p.name} for ${fmt(earned)}${mult > 1 ? ` (x${mult.toFixed(2)} island bonus)` : ""}.`);
+  success(player, `Sold ${it.amount}x ${p.name} for ${fmtExact(earned)}${mult > 1 ? ` (x${mult.toFixed(2)} island bonus)` : ""}.`);
 }
 
 function sellAll(player, prices) {
@@ -262,14 +260,27 @@ function sellAll(player, prices) {
   const mult = sellMultiplier(player);
   earned = Math.floor(earned * mult);
   addMoney(player, earned);
-  success(player, `Sold ${count} items for ${fmt(earned)}${mult > 1 ? ` (x${mult.toFixed(2)} island bonus)` : ""}.`);
+  success(player, `Sold ${count} items for ${fmtExact(earned)}${mult > 1 ? ` (x${mult.toFixed(2)} island bonus)` : ""}.`);
 }
 
+/** Sell prices, one page of categories, then a page per category. */
 function priceList(player, prices, back) {
+  const mult = sellMultiplier(player);
+  const bonus = mult > 1 ? `   §7Your island: §ax${mult.toFixed(2)}` : "";
   return tilePages(player, {
     title: "SELL PRICES",
-    body: "§7What the shop pays for one",
-    tiles: [...prices.values()].map((p) => ({ text: `${p.name}\n§a${fmt(p.sell)}`, icon: p.icon, onClick: () => priceList(player, prices, back) })),
+    body: "§7What the shop pays for one" + bonus,
+    tiles: Object.entries(SELL).map(([cat, list]) => ({
+      text: `${cat}\n§7${list.length} items`,
+      icon: list[0]?.icon,
+      onClick: () =>
+        tilePages(player, {
+          title: cat.toUpperCase(),
+          body: "§7What the shop pays for one" + bonus,
+          tiles: list.map((p) => ({ text: `${p.name}\n§a${fmtPrice(p.sell)}`, icon: p.icon, onClick: () => priceList(player, prices, back) })),
+          back: () => priceList(player, prices, back),
+        }),
+    })),
     back,
   });
 }

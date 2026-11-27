@@ -173,3 +173,77 @@ export const ORES = [
   item("Emerald", "emerald", 1500, I + "emerald"),
   item("Diamond", "diamond", 2500, I + "diamond"),
 ];
+
+// ============================================================================
+//  SELL LIST - the ONLY things the shop buys from players (Sell hand / Sell all).
+//  sell(name, id, price for ONE, icon). Cents are fine (0.5 = 50 cents).
+//  Rules these prices follow (keep to them when editing):
+//   - anything the shop also SELLS: sell price x 3 (the biggest Sell Multiplier)
+//     must stay below its buy price, so buying to sell back never makes money
+//   - glowstone dust x 4 (most a block drops) x 3 stays below the glowstone block price
+// ============================================================================
+export const sell = (name, id, price, icon) => ({ name, id: id.includes(":") ? id : `minecraft:${id}`, sell: price, icon });
+
+export const SELL = {
+  Ores: [
+    sell("Coal", "coal", 5, I + "coal"),
+    sell("Raw Copper", "raw_copper", 5, I + "raw_copper"),
+    sell("Copper Ingot", "copper_ingot", 8, I + "copper_ingot"),
+    sell("Raw Iron", "raw_iron", 15, I + "raw_iron"),
+    sell("Iron Ingot", "iron_ingot", 20, I + "iron_ingot"),
+    sell("Raw Gold", "raw_gold", 30, I + "raw_gold"),
+    sell("Gold Ingot", "gold_ingot", 40, I + "gold_ingot"),
+    sell("Lapis Lazuli", "lapis_lazuli", 8, I + "dye_powder_blue_new"),
+    sell("Redstone", "redstone", 2, I + "redstone_dust"),
+    sell("Emerald", "emerald", 200, I + "emerald"),
+    sell("Diamond", "diamond", 300, I + "diamond"),
+  ],
+  Farming: [
+    sell("Wheat", "wheat", 2, I + "wheat"),
+    sell("Beetroot", "beetroot", 2, I + "beetroot"),
+    sell("Potato", "potato", 1, I + "potato"),
+    sell("Carrot", "carrot", 1, I + "carrot"),
+    sell("Sugar Cane", "sugar_cane", 2, I + "reeds"),
+    sell("Bamboo", "bamboo", 0.5, I + "bamboo"),
+    sell("Melon", "melon_block", 4, B + "melon_side"),
+    sell("Melon Slice", "melon_slice", 0.5, I + "melon"),
+    sell("Pumpkin", "pumpkin", 4, B + "pumpkin_side"),
+    sell("Sweet Berries", "sweet_berries", 1, I + "sweet_berries"),
+  ],
+  "Mob Drops": [
+    sell("Raw Chicken", "chicken", 2, I + "chicken_raw"),
+    sell("Raw Porkchop", "porkchop", 3, I + "porkchop_raw"),
+    sell("Raw Beef", "beef", 3, I + "beef_raw"),
+    sell("Raw Mutton", "mutton", 2, I + "mutton_raw"),
+    sell("Raw Rabbit", "rabbit", 2, I + "rabbit_raw"),
+    sell("Egg", "egg", 1, I + "egg"),
+    sell("Leather", "leather", 4, I + "leather"),
+    sell("Feather", "feather", 1, I + "feather"),
+    ...COLOURS.map(([n, id, tex]) => sell(`${n} Wool`, `${id}_wool`, 2, `${B}wool_colored_${tex}`)),
+    sell("Rabbit's Foot", "rabbit_foot", 25, I + "rabbit_foot"),
+    sell("Rabbit Hide", "rabbit_hide", 3, I + "rabbit_hide"),
+    sell("Rotten Flesh", "rotten_flesh", 1, I + "rotten_flesh"),
+    sell("Bone", "bone", 2, I + "bone"),
+    sell("Arrow", "arrow", 1, I + "arrow"),
+    sell("Spider Eye", "spider_eye", 4, I + "spider_eye"),
+    sell("String", "string", 2, I + "string"),
+    sell("Gunpowder", "gunpowder", 5, I + "gunpowder"),
+    sell("Slimeball", "slime_ball", 6, I + "slimeball"),
+    sell("Sugar", "sugar", 1, I + "sugar"),
+    sell("Glowstone Dust", "glowstone_dust", 2, I + "glowstone_dust"),
+    sell("Wither Skeleton Skull", "wither_skeleton_skull", 1500, I + "skull_wither"),
+    sell("Blaze Rod", "blaze_rod", 40, I + "blaze_rod"),
+  ],
+  Blocks: [
+    sell("Dirt", "dirt", 0.5, B + "dirt"),
+    sell("Cobblestone", "cobblestone", 0.5, B + "cobblestone"),
+    sell("Stone", "stone", 0.5, B + "stone"),
+    sell("Granite", "granite", 0.5, B + "stone_granite"),
+    sell("Diorite", "diorite", 0.5, B + "stone_diorite"),
+    sell("Andesite", "andesite", 0.5, B + "stone_andesite"),
+  ],
+  // every log / stem the shop sells: 2 (8-buy logs) or 3 (10-12-buy logs)
+  Wood: WOOD.filter((w) => !w.id.endsWith("leaves") && !w.id.includes("leaves")).map((w) =>
+    sell(w.name, w.id, Math.ceil(w.price / 3) - 1, w.icon)
+  ),
+};
