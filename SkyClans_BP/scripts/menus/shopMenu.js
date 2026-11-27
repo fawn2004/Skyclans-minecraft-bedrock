@@ -74,8 +74,14 @@ const sellPrice = (e) => (e.spawner ? 0 : SELL_MAP.get(e.id)?.sell ?? 0);
 /** Money with cents for small sell prices: $0.50, $2, $1.5K */
 const fmtPrice = (n) => (n < 10 && n % 1 ? "$" + n.toFixed(2) : fmt(n));
 
+/** Item tile: name, then §a[Buy] $1 and §c[Sell] $0.50 (§8- when it can't be bought / sold). */
+function priceTile(name, buy, sell) {
+  const line = (label, colour, n) => (n > 0 ? `${colour}[${label}] ${fmtPrice(n)}` : `§8[${label}] -`);
+  return `${name}\n${line("Buy", "§a", buy)}\n${line("Sell", "§c", sell)}`;
+}
+
 function tileText(e) {
-  if (isItem(e)) return `${e.name}\n§a${fmt(e.price)}${e.spawner ? "" : " §feach"}`;
+  if (isItem(e)) return priceTile(e.name, e.price, sellPrice(e));
   if (isCategory(e)) {
     const n = e.children.length;
     if (n === 0) return `${e.name}\n§8Empty`;
@@ -88,6 +94,13 @@ function tileText(e) {
 }
 
 /** Every item in the shop. */
+/** Cheapest buy price for an item id (0 = not in the buy shop). */
+let BUY_MAP;
+function buyPrice(id) {
+  BUY_MAP ??= new Map(allItems().filter((e) => e.id && !e.spawner).map((e) => [e.id, e.price]));
+  return BUY_MAP.get(id) ?? 0;
+}
+
 function allItems(entry = SHOP, out = []) {
   for (const e of entry.children ?? []) {
     if (isItem(e)) out.push(e);
@@ -164,7 +177,7 @@ function buyMenu(player, item, back) {
   const sell = sellPrice(item);
   return tilePages(player, {
     title: item.name.toUpperCase(),
-    body: balanceLine(player) + (sell ? `   §7Sells for §a${fmtPrice(sell)} §7each` : ""),
+    body: balanceLine(player) + `   §a[Buy] ${fmtPrice(item.price)}   ` + (sell ? `§c[Sell] ${fmtPrice(sell)}` : "§8[Sell] -") + " §7each",
     tiles: amounts.map((n) => ({
       text: `Buy x${n}\n§a${fmt(item.price * n)}`,
       icon: item.icon,
@@ -277,7 +290,7 @@ function priceList(player, prices, back) {
         tilePages(player, {
           title: cat.toUpperCase(),
           body: "§7What the shop pays for one" + bonus,
-          tiles: list.map((p) => ({ text: `${p.name}\n§a${fmtPrice(p.sell)}`, icon: p.icon, onClick: () => priceList(player, prices, back) })),
+          tiles: list.map((p) => ({ text: priceTile(p.name, buyPrice(p.id), p.sell), icon: p.icon, onClick: () => priceList(player, prices, back) })),
           back: () => priceList(player, prices, back),
         }),
     })),
