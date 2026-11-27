@@ -198,7 +198,8 @@ export function registerCommands() {
         world.sendMessage(`§6§l[ANNOUNCEMENT] §r§f${text}`);
       }),
       [{ name: "message", type: P.String }],
-      Array.from({ length: 15 }, (_, i) => ({ name: `word${i + 2}`, type: P.String }))
+      // Bedrock allows 8 parameters per command: message + 7 more words (or put the message in "quotes")
+      Array.from({ length: 7 }, (_, i) => ({ name: `word${i + 2}`, type: P.String }))
     );
   });
 }
