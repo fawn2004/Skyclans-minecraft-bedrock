@@ -135,7 +135,7 @@ export function buyUpgrade(player, moduleId) {
   const m = moduleById(moduleId);
   const lvl = levelOf(clan, m.id);
   if (lvl >= m.prices.length) return `${m.name} is already maxed.`;
-  if (m.id === "size" && clan.island.wallJob) return "The island border is still moving - try again in a minute.";
+  if (m.id === "size" && clan.island.wallJob) return `The island border is still being built (${wallProgress(clan)}%) - try again when it's done.`;
   const price = m.prices[lvl];
   if (clan.bank < price) return `The clan bank needs ${fmt(price)} (it has ${fmt(clan.bank)}).`;
   clan.bank -= price;
@@ -148,6 +148,8 @@ export function buyUpgrade(player, moduleId) {
 
 // ---- island size: move the barrier walls (in slices, so any size works) --------------------
 const WALL = "minecraft:barrier";
+const WALL_BOTTOM = -64;
+const WALL_TOP = 319; // the highest block in the world (320 is outside it and makes /fill fail)
 let wallBusy = false;
 
 /** Wall slices for a plot of `size`: [{ from, to }] up to 16 blocks long, full height. */
@@ -173,13 +175,28 @@ export function resizeIsland(clan, oldSize, newSize) {
   runWallJobs();
 }
 
+/** 0-100 while the border is moving, else undefined. */
+export function wallProgress(clan) {
+  const job = clan.island.wallJob;
+  if (!job) return undefined;
+  const total = (job.oldSize ? wallSlices(0, 0, job.oldSize).length : 0) + wallSlices(0, 0, job.newSize).length;
+  return Math.min(99, Math.floor((job.step / total) * 100));
+}
+
 async function runWallJobs() {
   if (wallBusy) return;
   wallBusy = true;
   try {
     for (const clan of allClans()) {
+      // islands built before v0.15.2 had walls only up to Y 127: rebuild them full height once
+      if (!clan.island.wallJob && clan.island.built && !clan.island.wallsFull) {
+        clan.island.wallJob = { oldSize: null, newSize: clan.island.size, step: 0, repair: true };
+        saveClan(clan);
+      }
       if (clan.island.wallJob) await wallJob(clan);
     }
+  } catch (e) {
+    console.warn(`[SkyClans] border move error: ${e}`);
   } finally {
     wallBusy = false;
   }
@@ -191,50 +208,65 @@ async function wallJob(clan) {
   const job = clan.island.wallJob;
   // first remove the old walls (only barrier blocks), then build the new ones
   const steps = [
-    ...wallSlices(cx, cz, job.oldSize).map((s) => ({ ...s, cmd: "air replace barrier" })),
+    ...(job.oldSize ? wallSlices(cx, cz, job.oldSize).map((s) => ({ ...s, cmd: "air replace barrier" })) : []),
     ...wallSlices(cx, cz, job.newSize).map((s) => ({ ...s, cmd: WALL })),
   ];
   const area = `skyclans_wall_${clan.island.index}`;
+  let lastTold = Math.floor((job.step / steps.length) * 4);
   for (let i = job.step; i < steps.length; i++) {
     const s = steps[i];
-    const mx = Math.floor((s.from.x + s.to.x) / 2), mz = Math.floor((s.from.z + s.to.z) / 2);
-    if (!(await loadAt(dim, mx, mz, area))) {
-      console.warn(`[SkyClans] couldn't load ${mx},${mz} to move ${clan.name}'s wall - will retry later`);
-      return;
+    // both ends of the slice must be loaded, or the fill fails
+    if (!(await loadSlice(dim, s, area))) {
+      if (!job.warned) {
+        job.warned = true;
+        tell(clan, "§eYour island border is waiting for its area to load - it keeps trying, or stand near the edge of your island to speed it up.");
+      }
+      saveClan(clan);
+      return; // runWallJobs tries again in 30 seconds
     }
-    for (const [ya, yb] of [[-64, 127], [128, 320]]) {
+    for (const [ya, yb] of [[WALL_BOTTOM, 127], [128, WALL_TOP]]) {
       try {
         dim.runCommand(`fill ${s.from.x} ${ya} ${s.from.z} ${s.to.x} ${yb} ${s.to.z} ${s.cmd}`);
-      } catch {}
+      } catch {} // "air replace barrier" where there's no barrier "fails" - that's fine
     }
     job.step = i + 1;
     if (i % 8 === 0) saveClan(clan);
+    const quarter = Math.floor((job.step / steps.length) * 4);
+    if (!job.repair && quarter > lastTold && quarter < 4) {
+      lastTold = quarter;
+      tell(clan, `§7Moving your island border... §f${quarter * 25}%`);
+    }
   }
   try {
     dim.runCommand(`tickingarea remove ${area}`);
   } catch {}
   delete clan.island.wallJob;
+  clan.island.wallsFull = true;
   saveClan(clan);
-  tell(clan, `§a✔ Your island border is now ${job.newSize} x ${job.newSize}.`);
+  if (!job.repair) tell(clan, `§a✔ Your island border is now ${job.newSize} x ${job.newSize}.`);
 }
 
-/** Makes sure the chunk at x,z is loaded (with a small ticking area if needed). */
-async function loadAt(dim, x, z, area) {
-  const ok = () => {
+/** Loads both ends of a wall slice (with a small ticking area if needed). */
+async function loadSlice(dim, s, area) {
+  const loaded = (x, z) => {
     try {
       return dim.getBlock({ x, y: 64, z }) !== undefined;
     } catch {
       return false;
     }
   };
+  const ok = () => loaded(s.from.x, s.from.z) && loaded(s.to.x, s.to.z);
   if (ok()) return true;
+  const mx = Math.floor((s.from.x + s.to.x) / 2), mz = Math.floor((s.from.z + s.to.z) / 2);
   try {
     dim.runCommand(`tickingarea remove ${area}`);
   } catch {}
   try {
-    dim.runCommand(`tickingarea add circle ${x} 64 ${z} 1 ${area} true`);
-  } catch {}
-  for (let t = 0; t < 200; t += 5) {
+    dim.runCommand(`tickingarea add circle ${mx} 64 ${mz} 2 ${area} true`);
+  } catch (e) {
+    console.warn(`[SkyClans] tickingarea failed at ${mx},${mz}: ${e}`);
+  }
+  for (let t = 0; t < 300; t += 5) {
     if (ok()) return true;
     await system.waitTicks(5);
   }
@@ -282,7 +314,7 @@ export function registerIslandUpgrades() {
   world.afterEvents.worldLoad.subscribe(() => {
     system.runInterval(chargeUpkeep, 20 * 60);
     system.runInterval(updateFly, 20);
-    system.runTimeout(runWallJobs, 100); // finish any wall move interrupted by a restart
+    system.runInterval(runWallJobs, 20 * 30); // finish / retry border moves (and repair old walls)
   });
 }
 

@@ -8,7 +8,7 @@ import { isAdmin } from "./spawners.js";
 //
 //  The plot is ISLAND.sizes[0] (100) blocks square around the island centre.
 //  A wall of barrier blocks (invisible, unbreakable) stands just outside it,
-//  from the bottom of the world (-64) to the top (320).
+//  from the bottom of the world (-64) to the top (319).
 //
 //  Protection (everyone except admins):
 //   - island area: you can only build / break / open things inside your clan's plot
@@ -17,7 +17,7 @@ import { isAdmin } from "./spawners.js";
 
 const WALL_BLOCK = "minecraft:barrier";
 const WORLD_BOTTOM = -64;
-const WORLD_TOP = 320;
+const WORLD_TOP = 319; // highest block (320 is outside the world and makes fill fail)
 const SPAWN_PROTECT = 500; // blocks each way from spawn = 1000 x 1000
 
 const STARTER_CHEST = [
@@ -140,6 +140,7 @@ export async function buildIsland(player, clan) {
     }
     buildStarterIsland(dim, cx, cz);
     buildWalls(dim, cx, cz, size);
+    clan.island.wallsFull = true; // built full height
     markIslandBuilt(clan);
     ensureCore(clan);
     player.sendMessage("§a✔ Your island is ready!");

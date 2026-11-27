@@ -4,7 +4,7 @@ import { can, clanOf } from "../clans.js";
 import { fmt } from "../money.js";
 import { clanSpawnerCount } from "../spawners.js";
 import {
-  MODULES, UPKEEP_PER_LEVEL, buyUpgrade, coreLevel, levelOf, nextChargeIn, totalLevels, upkeepPaid, upkeepPerHour,
+  MODULES, UPKEEP_PER_LEVEL, buyUpgrade, wallProgress, coreLevel, levelOf, nextChargeIn, totalLevels, upkeepPaid, upkeepPerHour,
 } from "../islandUpgrades.js";
 import { bankMenu } from "./membersMenu.js";
 
@@ -32,6 +32,8 @@ function cardText(clan, m) {
   const max = m.prices.length;
   let effect = m.effect(lvl);
   if (m.id === "spawners") effect = `${clanSpawnerCount(clan)} / ${10 + lvl * 5} spawners`;
+  const moving = m.id === "size" ? wallProgress(clan) : undefined;
+  if (moving !== undefined && !clan.island.wallJob?.repair) effect = `§eBorder moving ${moving}%`;
   const bottom = lvl >= max ? "§aMAXED" : `§e${fmt(m.prices[lvl])}`;
   return `§f${m.name} §8${lvl}/${max}\n${pips(lvl, max)}\n§7${effect}\n${bottom}`;
 }
