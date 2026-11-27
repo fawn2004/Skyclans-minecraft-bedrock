@@ -128,12 +128,15 @@ export async function buildIsland(player, clan) {
     try {
       dim.runCommand(`tickingarea add circle ${cx} ${ISLAND.y} ${cz} 4 ${area} true`);
     } catch {}
-    let ok = await waitLoaded(dim, cx, cz, half, 200);
+    // only the middle (where the starter island goes) has to be loaded; the border
+    // wall is built afterwards in slices that load their own area
+    const START = 8;
+    let ok = await waitLoaded(dim, cx, cz, START, 200);
     if (!ok) {
       // not loaded yet: bring the player over (slow falling so they don't drop into the void)
       player.addEffect("slow_falling", 400, { showParticles: false });
       player.teleport({ x: cx + 0.5, y: ISLAND.y + 20, z: cz + 0.5 }, { dimension: dim });
-      ok = await waitLoaded(dim, cx, cz, half, 200);
+      ok = await waitLoaded(dim, cx, cz, START, 200);
     }
     if (!ok) {
       player.sendMessage("§cCouldn't load your island area - try /is home again in a moment.");

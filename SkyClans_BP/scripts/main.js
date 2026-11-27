@@ -12,6 +12,7 @@ import { CORE_ID, clanOfCore, registerIslands } from "./islands.js";
 import { openCoreMenu } from "./menus/coreMenu.js";
 import { registerIslandUpgrades } from "./islandUpgrades.js";
 import { registerNpcs } from "./npcs.js";
+import { registerIslandClear } from "./islandClear.js";
 
 registerSpawners();
 registerSidebar();
@@ -20,6 +21,7 @@ registerCommands(); // all the /commands are in commands.js
 registerIslands(); // island protection
 registerIslandUpgrades(); // core upgrades, upkeep, island fly, border moves
 registerNpcs(); // shop NPCs
+registerIslandClear(); // disbanded islands are cleared back to air
 world.afterEvents.worldLoad.subscribe(() => loadClans());
 
 const MENU_ITEM = "skyclans:menu";

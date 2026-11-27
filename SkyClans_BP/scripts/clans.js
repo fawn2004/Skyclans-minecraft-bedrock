@@ -94,11 +94,38 @@ export function onlineMembers(clan) {
 }
 
 // ---- island plots --------------------------------------------------------------------
+// Spots freed by disbanded (and cleared) islands are used again first.
+function freeIslands() {
+  try {
+    return JSON.parse(String(world.getDynamicProperty("skyclans:freeIslands") ?? "[]"));
+  } catch {
+    return [];
+  }
+}
+
+/** Called once a disbanded island has been cleared back to air. */
+export function freeIslandIndex(index) {
+  const free = freeIslands();
+  if (!free.includes(index)) free.push(index);
+  free.sort((a, b) => a - b);
+  world.setDynamicProperty("skyclans:freeIslands", JSON.stringify(free));
+}
+
 function nextIslandIndex() {
+  const free = freeIslands();
+  if (free.length) {
+    const n = free.shift();
+    world.setDynamicProperty("skyclans:freeIslands", JSON.stringify(free));
+    return n;
+  }
   const n = Number(world.getDynamicProperty("skyclans:nextIsland") ?? 0);
   world.setDynamicProperty("skyclans:nextIsland", n + 1);
   return n;
 }
+
+let onDisband = () => {};
+/** islandClear.js registers what happens to a disbanded clan's island. */
+export const setDisbandHandler = (fn) => (onDisband = fn);
 
 export const islandCentre = (index) => ISLAND.first + index * ISLAND.spacing;
 
@@ -246,6 +273,7 @@ export function disband(player) {
   clans.delete(clan.id);
   world.setDynamicProperty(PREFIX + clan.id, undefined);
   for (const p of onlineMembers(clan)) p.setDynamicProperty("skyclans:clan", undefined);
+  onDisband(clan); // clear the island back to air and free the spot
 }
 
 export function setHome(player) {

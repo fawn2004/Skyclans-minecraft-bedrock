@@ -72,6 +72,18 @@ function save(key, d) {
   world.setDynamicProperty(key, JSON.stringify({ mob: d.mob, level: d.level, stack: d.stack, owner: d.owner, ownerName: d.ownerName }));
 }
 
+/** Forgets every spawner inside an area (used when a disbanded island is cleared). -> how many */
+export function forgetSpawnersIn(dimId, x0, x1, z0, z1) {
+  let n = 0;
+  for (const [key, d] of [...spawners]) {
+    if (d.dim === dimId && d.x >= x0 && d.x <= x1 && d.z >= z0 && d.z <= z1) {
+      forget(key);
+      n++;
+    }
+  }
+  return n;
+}
+
 function forget(key) {
   spawners.delete(key);
   world.setDynamicProperty(key, undefined);
