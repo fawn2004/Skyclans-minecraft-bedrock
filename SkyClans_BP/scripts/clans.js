@@ -44,6 +44,9 @@ function save(c) {
   world.setDynamicProperty(PREFIX + c.id, JSON.stringify(c));
 }
 
+/** Saves a clan after changing it elsewhere (upgrades, upkeep, island jobs). */
+export const saveClan = save;
+
 export function loadClans() {
   clans.clear();
   for (const key of world.getDynamicPropertyIds()) {

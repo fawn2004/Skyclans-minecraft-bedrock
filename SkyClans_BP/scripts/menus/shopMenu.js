@@ -6,6 +6,7 @@ import { SPAWNERS } from "../spawnerConfig.js";
 import { KITS, kitsMenu } from "../kits.js";
 import { giveSpawner } from "../spawners.js";
 import { addMoney, fmt, getBalance, takeMoney } from "../money.js";
+import { sellMultiplier } from "../islandUpgrades.js";
 
 // Sky Shop: a tree of pages drawn with the simple tile grid (resource pack ui/sc_list.json).
 //
@@ -233,10 +234,11 @@ function sellHand(player, prices) {
   const it = inv?.getItem(slot);
   const p = it && plain(it) ? prices.get(it.typeId) : undefined;
   if (!p) return fail(player, it ? "The shop doesn't buy that item." : "You're not holding anything.");
-  const earned = p.sell * it.amount;
+  const mult = sellMultiplier(player);
+  const earned = Math.floor(p.sell * it.amount * mult);
   inv.setItem(slot, undefined);
   addMoney(player, earned);
-  success(player, `Sold ${it.amount}x ${p.name} for ${fmt(earned)}.`);
+  success(player, `Sold ${it.amount}x ${p.name} for ${fmt(earned)}${mult > 1 ? ` (x${mult.toFixed(2)} island bonus)` : ""}.`);
 }
 
 function sellAll(player, prices) {
@@ -252,8 +254,10 @@ function sellAll(player, prices) {
     inv.setItem(i, undefined);
   }
   if (!count) return fail(player, "You have nothing the shop buys.");
+  const mult = sellMultiplier(player);
+  earned = Math.floor(earned * mult);
   addMoney(player, earned);
-  success(player, `Sold ${count} items for ${fmt(earned)}.`);
+  success(player, `Sold ${count} items for ${fmt(earned)}${mult > 1 ? ` (x${mult.toFixed(2)} island bonus)` : ""}.`);
 }
 
 function priceList(player, prices, back) {

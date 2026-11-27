@@ -4,6 +4,7 @@ import { SPAWNERS, SPAWNER_SETTINGS as S } from "./spawnerConfig.js";
 import { NAV, SCREEN, fail, show, success } from "./forms.js";
 import { canBuild } from "./islands.js";
 import { clanOf, plotAt } from "./clans.js";
+import { spawnerCapOf } from "./islandUpgrades.js";
 
 // ============================================================================
 //  SPAWNERS
@@ -184,8 +185,8 @@ function depositHeads(player, mob) {
 
 // ---- placing & stacking ------------------------------------------------------
 // ---- spawner cap: each clan's island holds SPAWNER_CAP spawners (stacked ones count one each) ----
-export const SPAWNER_CAP = 10; // (Spawner Cap upgrades in the Island Core will raise this)
-export const spawnerCap = (clan) => SPAWNER_CAP;
+// 10, +5 per Spawner Cap upgrade in the Island Core (while upkeep is paid)
+export const spawnerCap = (clan) => spawnerCapOf(clan);
 
 /** Spawners on a clan's island, counting every spawner in each stack. */
 export function clanSpawnerCount(clan) {
