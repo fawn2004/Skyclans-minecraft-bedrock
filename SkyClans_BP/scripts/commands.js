@@ -11,6 +11,7 @@ import { addMoney, fmt, fmtExact, getBalance, setBalance, takeMoney, topBalances
 import { getSpawn, setSpawnHere } from "./serverSettings.js";
 import { RANKS, clanOf, invite, membersOf, onlineMembers, promote, demote, setHome, transfer, deposit, withdraw } from "./clans.js";
 import { goHome } from "./islands.js";
+import { openCoreMenu } from "./menus/coreMenu.js";
 import { bankMenu, clanSetupMenu, confirmKick, confirmLeaveOrDisband, createClanForm, joinByName, openMembersMenu, tellClan } from "./menus/membersMenu.js";
 
 // ============================================================================
@@ -222,7 +223,7 @@ function bankMove(p, action, n) {
 // ---- /is --------------------------------------------------------------------------------
 const IS_ACTIONS = [
   "create", "home", "sethome", "invite", "join", "leave", "kick", "promote", "demote",
-  "transfer", "info", "members", "bank", "deposit", "withdraw", "disband",
+  "transfer", "info", "members", "bank", "deposit", "withdraw", "disband", "core",
 ];
 
 const fail = (p, msg) => p.sendMessage(`§c✘ ${msg}`);
@@ -250,6 +251,8 @@ function isCommand(p, action, text) {
       return joinByName(p, text);
     case "members":
       return openMembersMenu(p);
+    case "core":
+      return clan ? openCoreMenu(p, clan) : needClan();
     case "bank":
       return clan ? bankMenu(p) : needClan();
     case "leave":

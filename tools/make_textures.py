@@ -638,3 +638,60 @@ for name, col in (("member_co", GREEN), ("member_member", PURPLE)):
 for name, col in (("btn_blue", (24, 70, 96)), ("btn_blue_hover", (34, 100, 136))):
     card(60, 14, tuple(min(255, v + 40) for v in col), col + (255,)).save(UI / f"{name}.png")
 print("v0.13 textures written")
+
+
+# ---------------------------------------------------------------- v0.14 Core Terminal
+CYAN_L = (120, 220, 245)
+# big core picture: nested cyan diamonds in a dark box (like the old terminal)
+core = card(50, 50, NAVY_EDGE, (10, 14, 24, 255))
+d = ImageDraw.Draw(core)
+cxp = cyp = 25 * S
+for r, col in ((20, CYAN), (16, (10, 14, 24)), (13, CYAN), (9, (10, 14, 24)), (7, CYAN_L)):
+    pts = [(cxp, cyp - r * S), (cxp + r * S, cyp), (cxp, cyp + r * S), (cxp - r * S, cyp)]
+    d.polygon(pts, fill=col + (255,))
+core.save(UI / "core_big.png")
+
+# small core icon for the header
+small = Image.new("RGBA", (12 * S, 12 * S), (0, 0, 0, 0))
+d = ImageDraw.Draw(small)
+d.rectangle([0, 0, 12 * S - 1, 12 * S - 1], outline=CYAN + (255,), width=S)
+d.rectangle([3 * S, 3 * S, 9 * S - 1, 9 * S - 1], fill=CYAN + (255,))
+small.save(UI / "core_small.png")
+
+# tabs, upgrade button, shield chip
+card(66, 16, NAVY_EDGE, NAVY).save(UI / "tab.png")
+card(66, 16, (230, 236, 245), (30, 40, 62, 255)).save(UI / "tab_on.png")
+card(66, 16, (110, 130, 170), (40, 52, 80, 255)).save(UI / "tab_hover.png")
+card(33, 10, CYAN, (16, 34, 48, 255)).save(UI / "btn_upg.png")
+card(33, 10, CYAN_L, (30, 70, 92, 255)).save(UI / "btn_upg_hover.png")
+card(52, 14, GREEN, (14, 40, 28, 255)).save(UI / "chip_green.png")
+card(52, 14, RED, (48, 18, 18, 255)).save(UI / "chip_red.png")
+
+# module icons
+EXPAND = [
+    "###....###",
+    "##......##",
+    "#.#....#.#",
+    "...#..#...",
+    "..........",
+    "..........",
+    "...#..#...",
+    "#.#....#.#",
+    "##......##",
+    "###....###",
+]
+HEART = [
+    ".##...##.",
+    "####.####",
+    "#########",
+    "#########",
+    ".#######.",
+    "..#####..",
+    "...###...",
+    "....#....",
+]
+for name, rows, col in (("icon_expand", EXPAND, CYAN), ("icon_heart", HEART, RED)):
+    img = Image.new("RGBA", (40, 40), (0, 0, 0, 0))
+    draw_sprite(img, rows, col, (40 - len(rows[0]) * 4) // 2, (40 - len(rows) * 4) // 2, 4)
+    img.save(UI / f"{name}.png")
+print("v0.14 textures written")

@@ -1,0 +1,14 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "skyclans:island_core",
+      "materials": { "default": "entity_emissive" },
+      "textures": { "default": "textures/entity/island_core" },
+      "geometry": { "default": "geometry.skyclans.island_core" },
+      "render_controllers": [ "controller.render.default" ],
+      "animations": { "spin": "animation.skyclans.island_core.spin" },
+      "scripts": { "animate": [ "spin" ] }
+    }
+  }
+}

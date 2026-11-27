@@ -6,6 +6,7 @@
     "ui/sc_raid.json",
     "ui/sc_list.json",
     "ui/sc_spawner.json",
-    "ui/sc_crate.json"
+    "ui/sc_crate.json",
+    "ui/sc_core.json"
   ]
 }

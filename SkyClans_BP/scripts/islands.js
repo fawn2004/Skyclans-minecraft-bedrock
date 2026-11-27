@@ -1,5 +1,5 @@
 import { BlockTypes, BlockVolume, ItemStack, system, world } from "@minecraft/server";
-import { ISLAND, clanOf, inIslandZone, markIslandBuilt, plotAt } from "./clans.js";
+import { ISLAND, clanById, clanOf, inIslandZone, markIslandBuilt, plotAt } from "./clans.js";
 import { getSpawn } from "./serverSettings.js";
 import { isAdmin } from "./spawners.js";
 
@@ -141,6 +141,7 @@ export async function buildIsland(player, clan) {
     buildStarterIsland(dim, cx, cz);
     buildWalls(dim, cx, cz, size);
     markIslandBuilt(clan);
+    ensureCore(clan);
     player.sendMessage("§a✔ Your island is ready!");
   } finally {
     building.delete(clan.id);
@@ -155,6 +156,42 @@ export function teleportHome(player, clan) {
   const h = clan.island.home;
   player.teleport({ x: h.x + 0.5, y: h.y, z: h.z + 0.5 }, { dimension: overworld() });
   player.sendMessage(`§b[SkyClans] §7Welcome home to §f${clan.name}§7.`);
+  // islands made before the core existed get one once the area has loaded
+  system.runTimeout(() => ensureCore(clan), 40);
+}
+
+// ---- Island Core -----------------------------------------------------------------------
+// A custom entity (Rune Rings model) standing on the island, just off the centre.
+// Tapping it opens the Core Terminal (menus/coreMenu.js).
+export const CORE_ID = "skyclans:island_core";
+const CORE_TAG = "skyclans_core";
+export const corePos = (clan) => ({ x: clan.island.cx + 0.5, y: ISLAND.y + 1, z: clan.island.cz - 2.5 });
+
+/** Spawns the clan's core if it isn't there. Only works while the island area is loaded. */
+export function ensureCore(clan) {
+  const dim = overworld();
+  const pos = corePos(clan);
+  try {
+    if (!dim.getBlock(pos)) return; // not loaded
+    const there = dim.getEntities({ type: CORE_ID, location: pos, maxDistance: 6 });
+    if (there.length) {
+      for (const e of there.slice(1)) e.remove(); // never more than one
+      return;
+    }
+    const core = dim.spawnEntity(CORE_ID, pos);
+    core.setDynamicProperty("skyclans:clan", clan.id);
+    core.addTag(CORE_TAG);
+    core.nameTag = "";
+  } catch (e) {
+    console.warn(`[SkyClans] couldn't place the island core for ${clan.name}: ${e}`);
+  }
+}
+
+/** Which clan an Island Core entity belongs to (by tag, else by where it stands). */
+export function clanOfCore(entity) {
+  const id = entity.getDynamicProperty("skyclans:clan");
+  const byTag = typeof id === "string" ? clanById(id) : undefined;
+  return byTag ?? plotAt(entity.location.x, entity.location.z);
 }
 
 /** /is home and the Island Home tile. */

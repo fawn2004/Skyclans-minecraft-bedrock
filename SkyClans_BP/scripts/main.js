@@ -8,7 +8,8 @@ import { getStartingMoney } from "./serverSettings.js";
 import { crateMenu, crateOfKey } from "./crates.js";
 import { registerCommands } from "./commands.js";
 import { loadClans } from "./clans.js";
-import { registerIslands } from "./islands.js";
+import { CORE_ID, clanOfCore, registerIslands } from "./islands.js";
+import { openCoreMenu } from "./menus/coreMenu.js";
 
 registerSpawners();
 registerSidebar();
@@ -28,6 +29,16 @@ world.afterEvents.itemUse.subscribe(({ source, itemStack }) => {
   const crate = crateOfKey(itemStack?.typeId);
   if (crate) crateMenu(source, crate).catch((e) => console.warn(`[SkyClans] crate error: ${e}`));
 });
+
+// Tapping (or hitting) an Island Core opens the Core Terminal.
+function coreTapped(player, entity) {
+  if (entity?.typeId !== CORE_ID || player?.typeId !== "minecraft:player") return;
+  const clan = clanOfCore(entity);
+  if (!clan) return player.sendMessage("§7This Island Core doesn't belong to a clan any more.");
+  openCoreMenu(player, clan).catch((e) => console.warn(`[SkyClans] core menu error: ${e}`));
+}
+world.afterEvents.playerInteractWithEntity.subscribe(({ player, target }) => coreTapped(player, target));
+world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => coreTapped(damagingEntity, hitEntity));
 
 // New players get the menu item and the starting money, once.
 world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {

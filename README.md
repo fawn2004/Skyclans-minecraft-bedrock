@@ -5,11 +5,12 @@ Clans add-on for Minecraft Bedrock skyblock. Built one menu at a time: each menu
 ## Install
 Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on both packs (behaviour + resources) in the world. Beta APIs are **not** needed.
 
-## What works so far (v0.13.4)
+## What works so far (v0.14.0)
 - **SkyClans Menu** item, given once to each new player (with the starting money), or `/give @s skyclans:menu`.
 - **Main menu:** real wallet in the stat chip; Spawn button teleports to the spawn point (0 0 0 until set in /admin). Raids, Sky Shop, Insurance, Members and Settings open their screens; Island Home teleports to your island (or opens Create clan).
 - **Clans & islands:** up to 5 players (Owner / Co-owner / Member). `/is create <name>` builds a starter island (dirt, tree, starter chest) on a 100x100 plot. Plot centres go diagonally from 10000/10000 every 700 blocks (10700/10700, 11400/11400 ...), so even 300x300 islands have a 400 block gap. A barrier wall surrounds each plot from Y -64 to 320. Only your clan can build, break or open things on your plot; spawn is protected in a 1000x1000 area (500 each way) where only players in creative can build or break. Explosions only break blocks in their own plot. Clan bank (deposit: everyone, withdraw: owner/co). Members screen shows real members with Kick / Leave / Disband and Promote / Demote. Clans are in `SkyClans_BP/scripts/clans.js`, islands and protection in `islands.js`.
-- **`/is`** `create <name>` `home` `sethome` `invite <player>` `join <clan>` `leave` `kick <name>` `promote <name>` `demote <name>` `transfer <name>` `info` `members` `bank` `deposit` `withdraw` (open the bank) `disband`. Clan bank with amounts: `/deposit <amount>` and `/withdraw <amount>`.
+- **Island Core:** a custom "Rune Rings" model on every island (obsidian pillars, two spinning purple rings, a bobbing burning crystal; can't be hurt or moved). Tap or hit it (or `/is core`) to open the **Core Terminal**: core panel with upkeep, 8 Core Modules (Island Size, Sell Multiplier, Island Fly, Spawner Cap, Crop Growth, Raid Shield Length, Defence Time, Extra Raid Life) and Modules / Upkeep / Raid Log / Insurance / Settings tabs. All buttons are "coming soon" for now. Model: `tools/make_core_model.py`; terminal: `SkyClans_BP/scripts/menus/coreMenu.js`.
+- **`/is`** `create <name>` `home` `sethome` `invite <player>` `join <clan>` `leave` `kick <name>` `promote <name>` `demote <name>` `transfer <name>` `info` `members` `bank` `deposit` `withdraw` (open the bank) `disband` `core`. Clan bank with amounts: `/deposit <amount>` and `/withdraw <amount>`.
 - **Money:** every player has a wallet. Money shows short everywhere ($5K, $100K, $1.5M). `/bal` shows it (short and exact), `/pay <player> <amount>` sends money.
 - **Sky Shop:** Spawners, Kits, Ores, Farming, Blocks (-> Blocks / Wood / Lights / Coloured Blocks), Redstone, Food, Search, Sell. Items buy as x1 / x16 / x64 (spawners x1 / x4 / x16). Sell: hand, all, or see prices (half the buy price unless an item sets `sell`). Items need an `id` to be bought or sold. The list is at the top of `SkyClans_BP/scripts/menus/shopMenu.js`.
 - **Kits:** tiers 1-15 (1-5 iron, 6-10 diamond, 11-15 netherite), bought with money. Tiers are in `SkyClans_BP/scripts/kits.js`.
@@ -29,5 +30,6 @@ Run `tools/build.sh`, then open `dist/SkyClans.mcaddon` on your device. Turn on 
 - `SkyClans_RP/ui/skyclans_menu.json` – the custom menu layout
 - `SkyClans_RP/ui/server_form.json` – uses the SkyClans layout only for forms whose title starts with `§s§c`; every other form stays vanilla
 - `tools/make_textures.py` – redraws the menu textures
-- `tools/make_layouts.py` – writes the Raid Dispatch layout (`sc_raid.json`)
+- `tools/make_layouts.py` – writes the Raid Dispatch and Core Terminal layouts (`sc_raid.json`, `sc_core.json`)
+- `tools/make_core_model.py` – writes the Island Core model and its texture
 - `SkyClans_RP/ui/sc_list.json` – simple tile grid used by the Sky Shop
