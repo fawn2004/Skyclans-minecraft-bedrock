@@ -5,6 +5,7 @@ import { NAV, SCREEN, fail, show, success } from "./forms.js";
 import { canBuild } from "./islands.js";
 import { clanOf, plotAt } from "./clans.js";
 import { spawnerCapOf } from "./islandUpgrades.js";
+import { raidCanPickSpawner } from "./raids.js";
 
 // ============================================================================
 //  SPAWNERS
@@ -66,6 +67,8 @@ export function isAdmin(p) {
   }
 }
 const canManage = (p, d) => !d.owner || d.owner === p.id || isAdmin(p);
+// raiders can pick up spawners on the island they're raiding (while the raid is on)
+const canPick = (p, d) => canManage(p, d) || raidCanPickSpawner(p, d.dim, d.x, d.z);
 
 function save(key, d) {
   spawners.set(key, d);
@@ -292,7 +295,7 @@ function addFromInventory(player, key) {
 function pickUp(player, key) {
   const d = spawners.get(key);
   if (!d) return;
-  if (!canManage(player, d)) return fail(player, "This isn't your spawner.");
+  if (!canPick(player, d)) return fail(player, "This isn't your spawner.");
   try {
     world.getDimension(d.dim).getBlock(d)?.setType("minecraft:air");
   } catch {}
@@ -346,7 +349,7 @@ export async function spawnerMenu(player, key, msg) {
     "",
     `§7Your ${name} heads §d${points}`,
     inBag ? `§8+${inBag} in your bag` : "",
-    manage ? "" : `\n§8Only ${d.ownerName ?? "the owner"} can upgrade\n§8or pick this up.`,
+    manage ? "" : canPick(player, d) ? "\n§c⚔ Raid! You can steal this spawner." : `\n§8Only ${d.ownerName ?? "the owner"} can upgrade\n§8or pick this up.`,
   ].filter((l, i) => l !== "" || i > 0).join("\n").trimEnd();
 
   const reopen = (m) => spawnerMenu(player, key, m);
@@ -379,7 +382,9 @@ export async function spawnerMenu(player, key, msg) {
         return reopen(`§aAdded §f${n} §aspawners.`);
       },
     });
-    tiles.push({ text: "§c§lPick up\n§7To inventory", icon: ICON + "icon_pickup", go: () => pickUp(player, key) });
+  }
+  if (canPick(player, d)) {
+    tiles.push({ text: manage ? "§c§lPick up\n§7To inventory" : "§c§lSteal\n§7Raid loot!", icon: ICON + "icon_pickup", go: () => pickUp(player, key) });
   }
   tiles.push({ text: "§7Close", icon: NAV + "back" });
 

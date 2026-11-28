@@ -10,6 +10,7 @@ import { goHome } from "../islands.js";
 import { openInsuranceMenu } from "./insuranceMenu.js";
 import { openRaidMenu } from "./raidMenu.js";
 import { openShopMenu } from "./shopMenu.js";
+import { insuranceTier, shieldLeft, timeLeft, whitelistLeft } from "../raids.js";
 
 const TILE = "textures/ui/skyclans/tile_";
 
@@ -18,7 +19,10 @@ const TILES = [
   { name: "Island Home", sub: "Teleport home", art: "home", open: (p) => (clanOf(p) ? goHome(p) : clanSetupMenu(p)) },
   { name: "Raids", sub: "Attack islands", art: "raids", open: (p) => openRaidMenu(p) },
   { name: "Sky Shop", sub: "Buy & sell", art: "shop", open: (p) => openShopMenu(p) },
-  { name: "Insurance", sub: "No cover yet", art: "insurance", open: (p) => openInsuranceMenu(p) },
+  { name: "Insurance", sub: (p) => {
+    const t = insuranceTier(clanOf(p));
+    return t ? `${t.name[0]}${t.name.slice(1).toLowerCase()} cover` : "No cover yet";
+  }, art: "insurance", open: (p) => openInsuranceMenu(p) },
   { name: "Members", sub: "Your clan", art: "members", open: (p) => openMembersMenu(p) },
   { name: "Settings", sub: "Your options", art: "settings", open: (p) => openSettingsMenu(p) },
 ];
@@ -29,10 +33,12 @@ export async function openMainMenu(player) {
     ? `CLAN ${clan.name.toUpperCase()}  ·  ${RANKS[rankOf(clan, player.id)].toUpperCase()}  ·  ${onlineMembers(clan).length} / ${memberCount(clan)} ONLINE`
     : `NO CLAN  ·  ${world.getPlayers().length} ONLINE`;
   const bank = clan ? fmtShort(clan.bank) : "$0";
-  const stats = `Bank §e${bank} §7 Wallet §a${fmtShort(getBalance(player))} §7 Shield §cOFF`;
+  const wl = whitelistLeft(clan), sh = shieldLeft(clan);
+  const shield = wl > 0 ? `§a${timeLeft(wl)}` : sh > 0 ? `§b${timeLeft(sh)}` : "§cOFF";
+  const stats = `Bank §e${bank} §7 Wallet §a${fmtShort(getBalance(player))} §7 Shield ${shield}`;
 
   const form = new ActionFormData().title(SCREEN.main + clanLine).body(stats);
-  for (const t of TILES) form.button(`${t.name}\n§7${t.sub}`, TILE + t.art);
+  for (const t of TILES) form.button(`${t.name}\n§7${typeof t.sub === "function" ? t.sub(player) : t.sub}`, TILE + t.art);
   form.button("Spawn"); // button 6: the Spawn button under the stat chip
 
   const res = await show(player, form);

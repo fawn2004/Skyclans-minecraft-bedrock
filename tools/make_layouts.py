@@ -138,9 +138,9 @@ def write(name, header, data):
 # 15    BACK
 RAID_MARK = "§s§c§5"
 CARDS = [
-    ("normal", "§6BLIND DROP", "NORMAL RAID"),
-    ("intel", "§6SCOUTED FIRST", "INTEL RAID"),
-    ("cheap", "§cSHIELDS DOWN", "CHEAP RAID"),
+    ("normal", "§6BLIND DROP", "RANDOM RAID"),
+    ("intel", "§6WAR ROOM", "RAID STATUS"),
+    ("cheap", "§cDEFENCE", "RAID SHIELD"),
 ]
 raid_controls = [
     {"small": title_line(RAID_MARK, 8, 6)},
@@ -164,9 +164,9 @@ for i, stat in enumerate(("wins", "losses", "streak")):
     raid_buttons.append({f"stat_text{i}": data_label(9 + i, x + 13, 28, 0.55)})
 raid_controls.append({"squad": image("squad_panel", 260, 48, 84, 180, [
     {"title": label("§l§fYOUR SQUAD", 6, 6, 0.8)},
-    {"sub": label("Everyone online goes", 6, 17, 0.5, color=[0.6, 0.6, 0.62])},
+    {"sub": label("The whole clan raids", 6, 17, 0.5, color=[0.6, 0.6, 0.62])},
     {"row": image("squad_row", 5, 26, 74, 18)},
-    {"foot": label("Lives each\nClan bank", 6, 160, 0.6, color=[0.75, 0.75, 0.78])},
+    {"foot": label("Clan lives\nClan bank", 6, 160, 0.6, color=[0.75, 0.75, 0.78])},
 ])})
 raid_buttons += [
     {"squad_name": data_label(12, 260 + 24, 48 + 29, 0.5, 34)},

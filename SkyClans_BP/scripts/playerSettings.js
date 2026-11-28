@@ -9,7 +9,7 @@ import { system, world } from "@minecraft/server";
 export const SETTINGS = [
   { id: "chunks", name: "Chunk Borders", desc: "Outline the chunk you are standing in.", art: "chunks", def: false },
   { id: "fullbright", name: "Full Bright", desc: "See clearly at night without torches.", art: "bright", def: false },
-  { id: "raidAlert", name: "Raid Alert Sound", desc: "Warning sound when raiders start bridging.", art: "alert", def: true },
+  { id: "raidAlert", name: "Raid Alert Sound", desc: "Warning sounds when a raid starts or ends.", art: "alert", def: true },
   { id: "coords", name: "Coordinates", desc: "Show X / Y / Z and facing on the action bar.", art: "coords", def: false },
 ];
 

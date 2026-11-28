@@ -12,13 +12,14 @@ import { getSpawn, setSpawnHere } from "./serverSettings.js";
 import { RANKS, clanOf, invite, membersOf, onlineMembers, promote, demote, setHome, transfer, deposit, withdraw } from "./clans.js";
 import { goHome } from "./islands.js";
 import { openCoreMenu } from "./menus/coreMenu.js";
+import { openRaidMenu } from "./menus/raidMenu.js";
 import { NPC_TYPES, removeNearestNpc, spawnNpc } from "./npcs.js";
-import { bankMenu, clanSetupMenu, confirmKick, confirmLeaveOrDisband, createClanForm, joinByName, openMembersMenu, tellClan } from "./menus/membersMenu.js";
+import { sendInvite, bankMenu, clanSetupMenu, confirmKick, confirmLeaveOrDisband, createClanForm, joinByName, openMembersMenu, tellClan } from "./menus/membersMenu.js";
 
 // ============================================================================
 //  COMMANDS
 //  Players:  /spawn /menu /shop /sell <hand|all> /bal /baltop /pay /kits
-//            /crates /settings /coords
+//            /crates /settings /coords /raid
 //            /is <create|home|sethome|invite|join|leave|kick|promote|demote|transfer|
 //                 info|members|bank|deposit|withdraw|disband> [name]
 //            /deposit <amount>  /withdraw <amount>   (clan bank)
@@ -81,6 +82,7 @@ export function registerCommands() {
     cmd("kits", "Open the kits", playerOnly((p) => kitsMenu(p)));
     cmd("crates", "See your crate keys and open crates", playerOnly((p) => cratesMenu(p)));
     cmd("settings", "Open your settings", playerOnly((p) => openSettingsMenu(p)));
+    cmd("raid", "Open Raid Dispatch (buy a raid, teleport to it, raid shield)", playerOnly((p) => openRaidMenu(p)));
     cmd(
       "coords",
       "Turn the coordinates display on or off",
@@ -292,7 +294,7 @@ function isCommand(p, action, text) {
       err = invite(p, target);
       if (!err) {
         ok(p, `Invited ${target.name}.`);
-        target.sendMessage(`§b[SkyClans] §f${p.name} §7invited you to §f${clan.name}§7. Type §f/is join ${clan.name} §7(5 minutes).`);
+        sendInvite(target, p, clan);
       }
       break;
     }

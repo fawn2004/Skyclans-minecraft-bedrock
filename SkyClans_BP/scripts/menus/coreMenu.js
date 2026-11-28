@@ -154,7 +154,7 @@ async function raidLogTab(player, clan, back) {
   const log = clan.raidLog ?? [];
   const info = log.length
     ? log.slice(-12).reverse().map((r) => `§7${r.when} §f${r.text}`).join("\n")
-    : "§7No raids yet.\n\n§8Raids on your island and the\n§8raids your clan sends will\n§8show up here once raids\n§8are added.";
+    : "§7No raids yet.\n\n§8Raids on your island and the\n§8raids your clan sends will\n§8show up here.";
   const form = new ActionFormData().title(`${SCREEN.spawner}§l§fRAID LOG`).body(info).button("§7Back", NAV + "back");
   const res = await show(player, form);
   if (res && !res.canceled) return back();

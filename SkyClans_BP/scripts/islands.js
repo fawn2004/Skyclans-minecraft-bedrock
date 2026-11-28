@@ -3,6 +3,7 @@ import { ISLAND, clanById, clanOf, inIslandZone, markIslandBuilt, plotAt, saveCl
 import { getSpawn } from "./serverSettings.js";
 import { queueWalls } from "./islandUpgrades.js";
 import { isAdmin } from "./spawners.js";
+import { raidAccess } from "./raids.js";
 
 // ============================================================================
 //  ISLANDS - building a clan's starter island and border, /is home, protection.
@@ -238,7 +239,9 @@ export function canBuild(player, dimId, l) {
   if (isAdmin(player)) return true;
   if (dimId !== "minecraft:overworld" || !inIslandZone(l.x, l.z)) return true;
   const mine = clanOf(player);
-  return !!mine && plotAt(l.x, l.z)?.id === mine.id;
+  const plot = plotAt(l.x, l.z);
+  // your own island, or one your clan is raiding right now
+  return !!mine && (plot?.id === mine.id || raidAccess(player, plot));
 }
 
 // Items that place or change blocks when used on a block

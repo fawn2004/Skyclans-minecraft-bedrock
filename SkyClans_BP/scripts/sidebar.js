@@ -3,6 +3,7 @@ import { fmt, getBalance } from "./money.js";
 import { sidebarEnabled } from "./serverSettings.js";
 import { ownedSpawnerCount, totalHeads } from "./spawners.js";
 import { clanOf } from "./clans.js";
+import { raidSidebar } from "./raids.js";
 
 // ============================================================================
 //  SIDEBAR - the panel on the right of the screen, different for each player.
@@ -24,6 +25,7 @@ function lines(player, online) {
     `§f${player.name}`,
     clan ? `§7Clan: §b${clan.name}` : "§7Clan: §8None yet",
     clan ? `§7Clan bank: §e${fmt(clan.bank)}` : "",
+    ...(raidSidebar(player).length ? ["", ...raidSidebar(player)] : []),
     "",
     `§7Balance: §a${fmt(getBalance(player))}`,
     `§7Spawners: §b${group(ownedSpawnerCount(player.id))}`,

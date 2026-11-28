@@ -100,7 +100,7 @@
       {
        "title": {
         "type": "label",
-        "text": "§l§fNORMAL RAID",
+        "text": "§l§fRANDOM RAID",
         "layer": 2,
         "size": [
          "default",
@@ -137,7 +137,7 @@
       {
        "kicker": {
         "type": "label",
-        "text": "§6SCOUTED FIRST",
+        "text": "§6WAR ROOM",
         "layer": 2,
         "size": [
          "default",
@@ -156,7 +156,7 @@
       {
        "title": {
         "type": "label",
-        "text": "§l§fINTEL RAID",
+        "text": "§l§fRAID STATUS",
         "layer": 2,
         "size": [
          "default",
@@ -193,7 +193,7 @@
       {
        "kicker": {
         "type": "label",
-        "text": "§cSHIELDS DOWN",
+        "text": "§cDEFENCE",
         "layer": 2,
         "size": [
          "default",
@@ -212,7 +212,7 @@
       {
        "title": {
         "type": "label",
-        "text": "§l§fCHEAP RAID",
+        "text": "§l§fRAID SHIELD",
         "layer": 2,
         "size": [
          "default",
@@ -316,7 +316,7 @@
       {
        "sub": {
         "type": "label",
-        "text": "Everyone online goes",
+        "text": "The whole clan raids",
         "layer": 2,
         "size": [
          "default",
@@ -356,7 +356,7 @@
       {
        "foot": {
         "type": "label",
-        "text": "Lives each\nClan bank",
+        "text": "Clan lives\nClan bank",
         "layer": 2,
         "size": [
          "default",

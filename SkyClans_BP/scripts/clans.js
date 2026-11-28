@@ -124,6 +124,9 @@ function nextIslandIndex() {
 }
 
 let onDisband = () => {};
+let inRaid = () => false;
+/** raids.js tells us which clans are in a raid (no withdrawing or disbanding then). */
+export const setRaidCheck = (fn) => (inRaid = fn);
 /** islandClear.js registers what happens to a disbanded clan's island. */
 export const setDisbandHandler = (fn) => (onDisband = fn);
 
@@ -195,6 +198,11 @@ export function invite(player, target) {
   const list = invitesFor(target.id).filter((i) => i.clanId !== clan.id);
   list.push({ clanId: clan.id, from: player.name, until: Date.now() + INVITE_MS });
   invites.set(target.id, list);
+}
+
+/** Turns down an invite (it's removed). */
+export function declineInvite(playerId, clanId) {
+  invites.set(playerId, invitesFor(playerId).filter((i) => i.clanId !== clanId));
 }
 
 export function join(player, clanName) {
@@ -270,6 +278,7 @@ export function disband(player) {
   const clan = clanOf(player);
   if (!clan) return "You're not in a clan.";
   if (rankOf(clan, player.id) !== "owner") return "Only the owner can disband the clan.";
+  if (inRaid(clan.id)) return "You can't disband during a raid.";
   clans.delete(clan.id);
   world.setDynamicProperty(PREFIX + clan.id, undefined);
   for (const p of onlineMembers(clan)) p.setDynamicProperty("skyclans:clan", undefined);
@@ -300,6 +309,7 @@ export function withdraw(player, amount, addMoney) {
   const clan = clanOf(player);
   if (!clan) return "You're not in a clan.";
   if (!can(clan, player.id, "withdraw")) return "Only the owner and co-owners can withdraw.";
+  if (inRaid(clan.id)) return "The clan bank is locked during a raid.";
   if (!(amount > 0)) return "The amount must be more than 0.";
   if (clan.bank < amount) return "The clan bank doesn't have that much.";
   clan.bank -= amount;

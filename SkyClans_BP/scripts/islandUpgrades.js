@@ -44,14 +44,14 @@ export const MODULES = [
     name: "Raid Shield Length",
     icon: "textures/ui/skyclans/head_insurance",
     prices: [100000, 250000, 500000, 1000000],
-    effect: (lvl) => `Immune ${12 + lvl * 3}h after a raid`,
+    effect: (lvl) => `Shield holds up to ${12 + lvl * 3}h`,
   },
   {
     id: "lives",
     name: "Extra Raid Life",
     icon: "textures/ui/skyclans/icon_heart",
     prices: [250000, 1000000],
-    effect: (lvl) => `Your raiders get ${3 + lvl} lives`,
+    effect: (lvl) => `Your clan raids with ${3 + lvl} lives`,
   },
 ];
 export const moduleById = (id) => MODULES.find((m) => m.id === id);

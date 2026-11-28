@@ -3,7 +3,7 @@ import { ActionFormData, MessageFormData, ModalFormData } from "@minecraft/serve
 import { SCREEN, fail, show, success, tilePages } from "../forms.js";
 import { openMainMenu } from "./mainMenu.js";
 import {
-  MAX_MEMBERS, RANKS, can, clanById, clanOf, createClan, demote, deposit, disband, invite, invitesFor,
+  MAX_MEMBERS, RANKS, can, clanById, clanOf, createClan, declineInvite, demote, deposit, disband, invite, invitesFor,
   join, kick, leave, membersOf, onlineMembers, promote, withdraw,
 } from "../clans.js";
 import { buildIsland } from "../islands.js";
@@ -169,13 +169,32 @@ function invitePicker(player) {
         if (err) fail(player, err);
         else {
           success(player, `Invited ${p.name}.`);
-          p.sendMessage(`§b[SkyClans] §f${player.name} §7invited you to §f${clan.name}§7. Type §f/is join ${clan.name} §7or open Members in the menu. (5 minutes)`);
+          sendInvite(p, player, clan);
         }
         return openMembersMenu(player);
       },
     })),
     back: () => openMembersMenu(player),
   });
+}
+
+/** Tells the invited player (chat) and pops up Accept / Decline. */
+export async function sendInvite(target, inviter, clan) {
+  target.sendMessage(`§b[SkyClans] §f${inviter.name} §7invited you to §f${clan.name}§7. Type §f/is join ${clan.name} §7or open Members in the menu. (5 minutes)`);
+  target.playSound("random.orb");
+  const res = await show(
+    target,
+    new MessageFormData()
+      .title("Clan invite")
+      .body(`${inviter.name} invited you to join the clan ${clan.name}.\n\nThe invite lasts 5 minutes. You can also accept later with /is join ${clan.name} or from Members in the menu.`)
+      .button1("§a§lAccept")
+      .button2("§cDecline")
+  );
+  if (!res || res.canceled) return; // closed: the invite still stands
+  if (res.selection === 0) return joinByName(target, clan.name);
+  declineInvite(target.id, clan.id);
+  target.sendMessage(`§7You declined the invite from §f${clan.name}§7.`);
+  if (inviter.isValid) inviter.sendMessage(`§c${target.name} declined your clan invite.`);
 }
 
 // ---- no clan yet: create one or accept an invite ----------------------------------------------
